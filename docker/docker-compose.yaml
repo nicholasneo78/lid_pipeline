@@ -1,0 +1,27 @@
+version: "3.4"
+
+services:
+  local:
+    build: ./
+    stdin_open: true
+    tty: true
+    image: sb_lid:v0.0.1
+    volumes:
+      - /mnt/d/code/asr-pipeline/lid_pipeline/:/lid
+      - /mnt/d/datasets/:/lid/datasets
+      - /mnt/d/models/:/lid/models
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    shm_size: 16gb
+    # command: python3 local_train.py
+
+  # tensorboard:
+  #   stdin_open: true
+  #   tty: true
+  #   image: sb_lid:v0.0.1
+  #   ports:
+  #     - 6006:6006
+  #   volumes:
+  #     - /mnt/d/code/asr-pipeline/lid_pipeline/results/ECAPA-TDNN/1986/logs:/logs
+  #   command: tensorboard --logdir /logs --host 0.0.0.0 --port 6006
