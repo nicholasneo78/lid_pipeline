@@ -19,7 +19,7 @@ services:
   # tensorboard:
   #   stdin_open: true
   #   tty: true
-  #   image: sb_lid:v0.0.1
+  #   image: sb_lid:v0.0.2
   #   ports:
   #     - 6006:6006
   #   volumes:
