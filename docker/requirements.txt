@@ -1,6 +1,7 @@
 torchaudio==0.8.1
 librosa == 0.8.1
 speechbrain==0.5.11
+torch==1.8.1
 
 hydra-core == 1.1.1
 pytorch_lightning == 1.5.0

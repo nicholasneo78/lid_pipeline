@@ -17,7 +17,7 @@ with open(hparams_file) as fin:
 # start clearml
 task = Task.init(project_name='LID', task_name='train', output_uri='s3://experiment-logging')
 task.set_base_docker(
-    docker_image='nicholasneo78/sb_lid:latest',
+    docker_image='nicholasneo78/sb_lid:v0.0.1',
 )
 
 # execute clearml
