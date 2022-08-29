@@ -17,7 +17,6 @@ Author
 
 logger = logging.getLogger(__name__)
 
-
 # Brain class for Language ID training
 class LID(sb.Brain):
     def prepare_features(self, wavs, stage):
