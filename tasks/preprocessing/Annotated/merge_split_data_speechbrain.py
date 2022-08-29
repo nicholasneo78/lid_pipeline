@@ -204,7 +204,7 @@ class MergeAndSplit:
         return self.convert_json_format(train_ratio, dev_ratio)
 
 if __name__ == '__main__':
-    BASE_DIR = '/lid/datasets/mms/mms_split_audio_segment'
+    BASE_DIR = '/lid/datasets/mms/mms_silence_removed'
 
     l = MergeAndSplit(json_dir_list=[f'{BASE_DIR}/manifest_en.json', f'{BASE_DIR}/manifest_ms.json'], 
                       train_dir=f'{BASE_DIR}/train_manifest_sb.json', 

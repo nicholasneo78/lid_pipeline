@@ -76,9 +76,9 @@ if __name__ == '__main__':
     LANGUAGES = ['ms', 'en']
 
     for lang in LANGUAGES:
-        get_manifest = GenerateManifestSpeechBrain(root_folder='/lid/datasets/mms/mms_split_audio_segment/', 
-                                                manifest_filename=f'/lid/datasets/mms/mms_split_audio_segment/manifest_{lang}.json', 
-                                                removed_dir='/lid/datasets/mms/mms_split_audio_segment/',
+        get_manifest = GenerateManifestSpeechBrain(root_folder='/lid/datasets/mms/mms_silence_removed/mms_batch_train', 
+                                                manifest_filename=f'/lid/datasets/mms/mms_silence_removed/manifest_{lang}.json', 
+                                                removed_dir='/lid/datasets/mms/mms_silence_removed/',
                                                 replaced_dir='{data_root}/', #'/workspace/datasets/mms/', #'{root}/',
                                                 target_language=lang,
                                                 audio_ext='.wav')

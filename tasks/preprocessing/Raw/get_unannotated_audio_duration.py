@@ -47,7 +47,7 @@ if __name__ == '__main__':
     MODE = 'one_date' # one_dir or one_date
 
     # other configs
-    dataset_dir = 'mms_prediction_055'
+    dataset_dir = 'mms'
     # dataset_dir = 'mms_silence_removed'
     batch = 'mms_batch_2'
     batch_date = 'mms_20220624'
@@ -75,8 +75,8 @@ if __name__ == '__main__':
     # check info for a single date
     elif MODE == 'one_date':
 
-        # channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
-        channel_list = ['CH 10/en', 'CH 10/ms', 'CH 10/others', 'CH 16/en', 'CH 16/ms', 'CH 16/others', 'CH 73/en', 'CH 73/ms', 'CH 73/others', 'CH 14/en', 'CH 14/ms', 'CH 14/others']
+        channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
+        # channel_list = ['CH 10/en', 'CH 10/ms', 'CH 10/others', 'CH 16/en', 'CH 16/ms', 'CH 16/others', 'CH 73/en', 'CH 73/ms', 'CH 73/others', 'CH 14/en', 'CH 14/ms', 'CH 14/others']
         for channel in channel_list:
             try:
                 AUDIO_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}'

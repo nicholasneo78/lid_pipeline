@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 import sys
 import torch
@@ -317,12 +316,16 @@ if __name__ == "__main__":
         checkpointer=hparams["checkpointer"],
     )
 
+    # freezing starts
+
     count = 0
 
     for name, child in lid_brain.modules.named_children():
         if name == "embedding_model":
             # print(dir(child))
             child.requires_grad_ = False
+
+    # freezing ends
 
             # for param in child.parameters():
             #     param.requires_grad = False

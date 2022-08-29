@@ -1,9 +1,6 @@
-test_output
-outputs
 .hydra
 *.log
 datasets/*
-annotations/*
 *.ipynb_checkpoints
 
 tmp/
