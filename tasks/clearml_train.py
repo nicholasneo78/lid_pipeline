@@ -2,18 +2,17 @@ from clearml import Task, Dataset
 import sys
 import speechbrain as sb    
 from hyperpyyaml import load_hyperpyyaml
-import yaml
 
 # reading of the yaml file presented
 # Reading command line arguments.
 hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
 
-print(f'hparams file: {hparams_file}')
-print()
-print(f'run opts: {run_opts}')
-print()
-print(f'overrides: {overrides}')
-print()
+# print(f'hparams file: {hparams_file}')
+# print()
+# print(f'run opts: {run_opts}')
+# print()
+# print(f'overrides: {overrides}')
+# print()
 
 # Initialize ddp (useful only for multi-GPU DDP training).
 sb.utils.distributed.ddp_init_group(run_opts)
@@ -23,7 +22,7 @@ with open(hparams_file) as fin:
     hparams = load_hyperpyyaml(fin, overrides)
 
 # start clearml
-task = Task.init(project_name='LID', task_name='train_1epoch', output_uri='s3://experiment-logging')
+task = Task.init(project_name='LID', task_name='train', output_uri='s3://experiment-logging')
 task.set_base_docker(
     docker_image='nicholasneo78/sb_lid:v0.0.2',
 )
@@ -50,23 +49,7 @@ hparams['data_folder'] = dataset_small_path
 
 dataset_task = Task.get_task(dataset_small.id)
 
-# print(dataset_task.artifacts['data'])
-
-# for split in ['train', 'dev', 'test']:
-#     hparams_file[f'{split}_annotation'] = dataset_task.artifacts[f'{split}_manifest_sb.json'].get_local_copy()
-# hparams_file['data_folder'] = dataset_small.get_local_copy()
-
 print('ran here 0')
-
-# create the dataset to store the pretrained model
-dataset = Dataset.create(
-    dataset_project='datasets/LID',
-    dataset_name='trained_model',
-    parent_datasets=['a8c2b7fc535c4cd3b7d900721a76a2b3']
-)
-
-# change the output folder of the trained model
-hparams['output_folder'] = f'results/ECAPA-TDNN/{hparams["seed"]}'
 
 # load dataset manifest path, the train dev and test set
 hparams['train_annotation'] = f'{dataset_small_path}/train_manifest_sb.json'
@@ -144,6 +127,13 @@ test_stats = lid_brain.evaluate(
 )
 
 print('ran here 8')
+
+# create the dataset to store the pretrained model
+dataset = Dataset.create(
+    dataset_project='datasets/LID',
+    dataset_name='trained_model',
+    parent_datasets=['a8c2b7fc535c4cd3b7d900721a76a2b3']
+)
 
 dataset.add_files(path=hparams['output_folder'])
 dataset.upload(output_url="s3://experiment-logging")

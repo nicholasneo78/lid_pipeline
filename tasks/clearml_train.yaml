@@ -7,13 +7,13 @@
 #  * Pavlo Ruban
 # #################################hparams
 # Seed needs to be set at top of yaml, before objects with parameters are made
-seed: 2000
+seed: 2001
 __set_seed: !apply:torch.manual_seed [!ref <seed>]
 
 # Set up folders for reading from and writing to
 # Dataset will be downloaded to the `data_folder`
 data_folder: null # e.g. /localscratch/common_voice_kpd/
-output_folder: null
+output_folder: !ref results/ECAPA-TDNN/<seed>
 save_folder: !ref <output_folder>/save
 train_log: !ref <output_folder>/train_log.txt
 
@@ -37,8 +37,8 @@ n_mels: 60
 
 # Training Parameters
 sample_rate: 16000
-number_of_epochs: 1 # 30
-batch_size: 2
+number_of_epochs: 20 # 30
+batch_size: 4
 n_languages: 2
 emb_dim: 256 # dimensionality of the embeddings
 
