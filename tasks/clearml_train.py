@@ -3,16 +3,8 @@ import sys
 import speechbrain as sb    
 from hyperpyyaml import load_hyperpyyaml
 
-# reading of the yaml file presented
-# Reading command line arguments.
+# Reading command line arguments
 hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
-
-# print(f'hparams file: {hparams_file}')
-# print()
-# print(f'run opts: {run_opts}')
-# print()
-# print(f'overrides: {overrides}')
-# print()
 
 # Initialize ddp (useful only for multi-GPU DDP training).
 sb.utils.distributed.ddp_init_group(run_opts)
@@ -35,7 +27,7 @@ from preprocessing.Train.train import LID, dataio_prep
 # get the pretrained embedding model
 pretrained_embedding = Dataset.get(dataset_id='45e011de2c0d4c87b39656e0e3f61a24')
 pretrained_embedding_path = pretrained_embedding.get_local_copy()
-#pretrained_embedding_file = f'{pretrained_embedding_path}/embedding_model.ckpt'
+
 # overwrite the embedding path 
 print(hparams['embedding_model_path'])
 hparams['embedding_model_path'] = f'{pretrained_embedding_path}/embedding_model.ckpt'
@@ -49,14 +41,10 @@ hparams['data_folder'] = dataset_small_path
 
 dataset_task = Task.get_task(dataset_small.id)
 
-print('ran here 0')
-
 # load dataset manifest path, the train dev and test set
 hparams['train_annotation'] = f'{dataset_small_path}/train_manifest_sb.json'
 hparams['dev_annotation'] = f'{dataset_small_path}/dev_manifest_sb.json'
 hparams['test_annotation'] = f'{dataset_small_path}/test_manifest_sb.json'
-
-print('ran here 1')
 
 ### start running the code
 
@@ -67,8 +55,6 @@ sb.create_experiment_directory(
     overrides=overrides,
 )
 
-print('ran here 2')
-
 if hparams["use_tensorboard"]:
     from speechbrain.utils.train_logger import TensorboardLogger
 
@@ -76,23 +62,14 @@ if hparams["use_tensorboard"]:
         hparams["tensorboard_logs"]
     )
 
-print('ran here 3')
-
 # Create dataset objects "train", "dev", and "test" and language_encoder
 datasets, language_encoder = dataio_prep(hparams)
 
-print('ran here 4')
-
 hparams['pretrainer'].paths['embedding_model'] = hparams['embedding_model_path']
-
-print('ran here 5')
 
 # Fetch and load pretrained modules
 sb.utils.distributed.run_on_main(hparams["pretrainer"].collect_files)
-print('ran here 5.5')
 hparams["pretrainer"].load_collected(device=run_opts["device"])
-
-print('ran here 6')
 
 # Initialize the Brain object to prepare for mask training.
 lid_brain = LID(
@@ -117,16 +94,12 @@ lid_brain.fit(
     valid_loader_kwargs=hparams["test_dataloader_options"],
 )
 
-print('ran here 7')
-
 # Load the best checkpoint for evaluation
 test_stats = lid_brain.evaluate(
     test_set=datasets["test"],
     min_key="error",
     test_loader_kwargs=hparams["test_dataloader_options"],
 )
-
-print('ran here 8')
 
 # create the dataset to store the pretrained model
 dataset = Dataset.create(

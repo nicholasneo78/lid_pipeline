@@ -1,4 +1,4 @@
-pretrained_path: 'lid' # '/lid/tasks/preprocessing/Train/results/ECAPA-TDNN/2000/save/CKPT+2022-08-28+10-11-47+00'
+pretrained_path: ''
 
 # device: 'cpu' # set 'cuda:0' for gpu
 device: 'cuda:0'

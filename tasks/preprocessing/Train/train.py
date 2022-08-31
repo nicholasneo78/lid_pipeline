@@ -246,7 +246,6 @@ def dataio_prep(hparams):
             dynamic_items=[audio_pipeline, label_pipeline],
             output_keys=["id", "sig", "language_encoded"],
         )
-    print('ran here 3b')
 
     # Load or compute the label encoder (with multi-GPU DDP support)
     # Please, take a look into the lab_enc_file to see the label to index
@@ -254,13 +253,13 @@ def dataio_prep(hparams):
     language_encoder_file = os.path.join(
         hparams["save_folder"], "language_encoder.txt"
     )
-    print('ran here 3c')
+    
     language_encoder.load_or_create(
         path=language_encoder_file,
         from_didatasets=[datasets["train"]],
         output_key="language",
     )
-    print('ran here 3d')
+
     return datasets, language_encoder
 
 

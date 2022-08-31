@@ -7,7 +7,7 @@
 #  * Pavlo Ruban
 # #################################hparams
 # Seed needs to be set at top of yaml, before objects with parameters are made
-seed: 2009
+seed: 2011
 __set_seed: !apply:torch.manual_seed [!ref <seed>]
 
 # Set up folders for reading from and writing to
@@ -17,7 +17,7 @@ output_folder: !ref /lid/tasks/preprocessing/Train/results/ECAPA-TDNN/<seed>
 save_folder: !ref <output_folder>/save
 train_log: !ref <output_folder>/train_log.txt
 
-train_annotation: /lid/datasets/mms/mms_silence_removed/train_manifest_sb_2s.json
+train_annotation: /lid/datasets/mms/mms_silence_removed/train_manifest_sb.json
 dev_annotation: /lid/datasets/mms/mms_silence_removed/dev_manifest_sb.json
 test_annotation: /lid/datasets/mms/mms_silence_removed/test_manifest_sb.json
 
@@ -37,7 +37,7 @@ n_mels: 60
 
 # Training Parameters
 sample_rate: 16000
-number_of_epochs: 30 # 30
+number_of_epochs: 2 # 30
 batch_size: 2
 n_languages: 2
 emb_dim: 256 # dimensionality of the embeddings

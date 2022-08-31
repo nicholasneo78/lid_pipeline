@@ -25,4 +25,21 @@ get_hyperparams_root_path = get_hyperparams.get_local_copy()
 with open(f'{get_hyperparams_root_path}/hyperparams.yaml') as fin:
     hparams = load_hyperpyyaml(fin)
 
+ckpt_path = 'save/CKPT+2022-08-30+03-45-50+00'
+
+# overwrite the values in the hyperparams file to point to the clearml dataset
+MODEL_ROOT_PATH = f'{get_model_root_path}/{ckpt_path}'
+hparams['pretrained_path'] = MODEL_ROOT_PATH
+
+# hparams['pretrainer'].paths['embedding_model'] = f'{MODEL_ROOT_PATH}/embedding_model.ckpt'
+# hparams['pretrainer'].paths['normalizer_input'] = f'{MODEL_ROOT_PATH}/normalizer_input.ckpt'
+# hparams['pretrainer'].paths['classifier'] = f'{MODEL_ROOT_PATH}/classifier.ckpt'
+# hparams['pretrainer'].paths['label_encoder'] = f'{MODEL_ROOT_PATH}/label_encoder.ckpt'
+
+# save the edited hyperparams into the correct folder where it should reside
+
+
 # move the config file into the save folder
+shutil.move(f'{get_hyperparams_root_path}/hyperparams.yaml', f'{get_model_root_path}/{ckpt_path}/hyperparams.yaml')
+
+# change the input of the hyperparams.yaml file

@@ -4,6 +4,7 @@ datasets/*
 *.ipynb_checkpoints
 
 tmp/
+tmp_/
 results/
 tests/
 data/
