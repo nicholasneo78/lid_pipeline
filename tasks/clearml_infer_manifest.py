@@ -11,35 +11,55 @@ task.execute_remotely(queue_name='compute', exit_process=True)
 
 from preprocessing.Train.infer_manifest import InferManifest, ConvertToStandardJSON
 import shutil
-from hyperpyyaml import load_hyperpyyaml
 
 # load the model that is trained previously
-get_model = Dataset.get(dataset_id='380af3a250354166baa15fedb046de58')
-get_model_root_path = get_model.get_local_copy()
+get_model = Dataset.get(dataset_id='a2818e2bbf1e419d97738aa42b6b73e5')
+model_root_path = get_model.get_local_copy()
+
+ckpt_path = 'CKPT+2022-08-30+06-09-58+00'
 
 # load the hyperparams config file that is needed for the inference
-get_hyperparams = Dataset.get(dataset_id='a0e6290d17eb4407a5b753c0f4934a7f')
-get_hyperparams_root_path = get_hyperparams.get_local_copy()
+get_hyperparams = Dataset.get(dataset_id='22ffe0aba2594c3abaf3251f2b16af5c')
+hyperparams_root_path = get_hyperparams.get_local_copy()
 
-# load the yaml file to get the parameters
-with open(f'{get_hyperparams_root_path}/hyperparams.yaml') as fin:
-    hparams = load_hyperpyyaml(fin)
+# load the dataset for inference
+get_dataset = Dataset.get(dataset_id='a8872c8f04444a75b7e1436a72a534e4')
+dataset_root_path = get_dataset.get_local_copy()
 
-ckpt_path = 'save/CKPT+2022-08-30+03-45-50+00'
+# move the config file into the save folder in order for the code to run correctly
+shutil.move(f'{hyperparams_root_path}/hyperparams.yaml', f'{model_root_path}/save/{ckpt_path}/hyperparams.yaml')
 
-# overwrite the values in the hyperparams file to point to the clearml dataset
-MODEL_ROOT_PATH = f'{get_model_root_path}/{ckpt_path}'
-hparams['pretrained_path'] = MODEL_ROOT_PATH
+### running the code
+infer = InferManifest(input_manifest_dir=f'{dataset_root_path}/mms_batch_1s/manifest.json', 
+                      pretrained_model_root=f'{model_root_path}/save', 
+                      ckpt_folder=ckpt_path,
+                      threshold={'en': 0.6, 'ms': 0.6}, 
+                      root_dir_remove_tmp=dataset_root_path, 
+                      old_dir='/lid/datasets/mms/mms_silence_removed/', # the manifest path where the data path is being uploaded locally
+                      replaced_dir='{data_root}/', 
+                      output_manifest_dir='output/', 
+                      data_batch='batch_1s',
+                      iteration_num=1)
 
-# hparams['pretrainer'].paths['embedding_model'] = f'{MODEL_ROOT_PATH}/embedding_model.ckpt'
-# hparams['pretrainer'].paths['normalizer_input'] = f'{MODEL_ROOT_PATH}/normalizer_input.ckpt'
-# hparams['pretrainer'].paths['classifier'] = f'{MODEL_ROOT_PATH}/classifier.ckpt'
-# hparams['pretrainer'].paths['label_encoder'] = f'{MODEL_ROOT_PATH}/label_encoder.ckpt'
+EN_PATH = 'output/batch_1s_iteration_1_en.json'
+OTHERS_PATH = 'output/batch_1s_iteration_1_others.json'
 
-# save the edited hyperparams into the correct folder where it should reside
+c_en = ConvertToStandardJSON(input_manifest=EN_PATH, output_manifest=EN_PATH)
+c_others = ConvertToStandardJSON(input_manifest=OTHERS_PATH, output_manifest=OTHERS_PATH)
 
+infer()
+c_en()
+c_others()
 
-# move the config file into the save folder
-shutil.move(f'{get_hyperparams_root_path}/hyperparams.yaml', f'{get_model_root_path}/{ckpt_path}/hyperparams.yaml')
+# create dataset to store the new manifests
+dataset = Dataset.create(
+    dataset_project='datasets/LID',
+    dataset_name='inference_iteration_1',
+    parent_datasets=['a8872c8f04444a75b7e1436a72a534e4']
+)
 
-# change the input of the hyperparams.yaml file
+dataset.add_files(path='output/')
+dataset.upload(output_url="s3://experiment-logging")
+dataset.finalize()
+
+print('Done')
