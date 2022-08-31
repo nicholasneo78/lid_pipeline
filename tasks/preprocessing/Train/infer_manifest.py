@@ -176,9 +176,9 @@ class ConvertToStandardJSON:
         return self.convert()
 
 if __name__ == '__main__':
-    infer = InferManifest(input_manifest_dir='/lid/datasets/mms/mms_silence_removed/mms_batch_2s/manifest.json', 
-                          pretrained_model_root='/lid/tasks/preprocessing/Train/results/ECAPA-TDNN/2010/save', 
-                          ckpt_folder='CKPT+2022-08-31+02-28-36+00',
+    infer = InferManifest(input_manifest_dir='/lid/datasets/mms/mms_silence_removed/mms_batch_1s/manifest.json', 
+                          pretrained_model_root='/lid/tasks/preprocessing/Train/results/ECAPA-TDNN/2011/save', 
+                          ckpt_folder='CKPT+2022-08-31+06-42-33+00',
                           threshold={'en': 0.6, 'ms': 0.6}, 
                           root_dir_remove_tmp='/lid/tasks/preprocessing/Train/', 
                           old_dir='/lid/datasets/mms/mms_silence_removed/', 
