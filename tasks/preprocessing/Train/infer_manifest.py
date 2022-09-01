@@ -16,7 +16,7 @@ class InferManifest:
         takes in a manifest file containing all the unannotated audio clips, produce the various manifest files based on languages that is based on confidence threshold
     '''
 
-    def __init__(self, input_manifest_dir: str, pretrained_model_root: str, ckpt_folder: str, threshold: Dict[str, float], root_dir_remove_tmp: str, old_dir: str, inference_replaced_dir: str, new_manifest_replaced_dir: str, output_manifest_dir: str, data_batch: str, iteration_num: int) -> None:
+    def __init__(self, input_manifest_dir: str, pretrained_model_root: str, ckpt_folder: str, threshold: Dict[str, float], root_dir_remove_tmp: str, old_dir: str, inference_replaced_dir: str, new_manifest_replaced_dir: str, output_manifest_dir: str, data_batch: str, iteration: str) -> None:
         '''
             input_manifest_dir: the manifest file with all the directories to the audio files
             pretrained_model_root: the pretrained speechbrain LID model root, ends with '.../save'
@@ -28,7 +28,7 @@ class InferManifest:
             new_manifest_replaced_dir: the root directory replaced to the speechbrain format for the newly produced manifest after the inference
             output_manifest_dir: the final manifest directory of the confident prediction
             data_batch: the data batch that is being inferenced
-            iteration_num: the number of times the data has iterate already in the training loop
+            iteration: the number of times the data has iterate already in the training loop
         '''
         self.input_manifest_dir = input_manifest_dir
         self.pretrained_model_root = pretrained_model_root
@@ -40,7 +40,7 @@ class InferManifest:
         self.new_manifest_replaced_dir = new_manifest_replaced_dir
         self.output_manifest_dir = output_manifest_dir
         self.data_batch = data_batch
-        self.iteration_num = iteration_num
+        self.iteration = iteration
 
         # full path to the model will be '<pretrained_model_root>/<ckpt_folder>'
         self.pretrained_model_path = f'{self.pretrained_model_root}/{self.ckpt_folder}'
@@ -147,7 +147,7 @@ class InferManifest:
                     'duration': entry['duration']}
 
             # write to json file
-            with open(f'{self.output_manifest_dir}/{self.data_batch}_iteration_{self.iteration_num}_{pred_class}.json', 'a+', encoding='utf-8') as f:
+            with open(f'{self.output_manifest_dir}/{self.data_batch}_{self.iteration}_{pred_class}.json', 'a+', encoding='utf-8') as f:
                 f.write(json.dumps(data) + '\n')
 
     def __call__(self):
@@ -201,7 +201,7 @@ if __name__ == '__main__':
                           new_manifest_replaced_dir='{data_root}/', 
                           output_manifest_dir='/lid/datasets/mms/mms_silence_removed/', 
                           data_batch='batch_1s', 
-                          iteration_num=1)
+                          iteration='iteration_1')
 
     EN_PATH = '/lid/datasets/mms/mms_silence_removed/batch_1s_iteration_1_en.json'
     OTHERS_PATH = '/lid/datasets/mms/mms_silence_removed/batch_1s_iteration_1_others.json'
