@@ -41,7 +41,7 @@ os.mkdir(f'{MANIFEST_ROOT}/')
 ### executing the code ###
 THRESHOLD_DICT = {'en': 0.6, 'ms': 0.6}
 OLD_DIR = '/lid/datasets/mms/mms_silence_removed/'
-DATA_BATCH = 'batch_1s'
+DATA_BATCH = 'batch_2s'
 ITERATION = 'iteration_1'
 LANG_LIST = ['en', 'ms', 'others']
 

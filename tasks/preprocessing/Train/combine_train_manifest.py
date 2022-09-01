@@ -24,8 +24,6 @@ class CombineTrainManifest:
                 for data_key in tqdm(data_dict):
                     final_data_dict[data_key] = data_dict[data_key]
 
-
-
         # export to the final json format
         with open(f'{self.output_manifest}', 'w', encoding='utf-8') as f:
             f.write(json.dumps(final_data_dict, indent=2))
