@@ -67,28 +67,29 @@ class InferManifest:
         try:
             # shift the encoder text file
             shutil.move(f'{self.pretrained_model_root}/language_encoder.txt', f'{self.pretrained_model_path}/label_encoder.txt')
-            print('shift model ok')
         except FileNotFoundError:
             # the language encoder file has been shifted
-            print('shift model NOT ok')
             pass
 
-    def predict_class(self, audio_path: str) -> str:
+    def load_pretrained_model(self) -> EncoderClassifier:
+        '''
+            load the pretrained model and cached that model by returning it only once so that iterative inference will be faster
+        '''
+
+        # load the pretrained model, overrides the filepath in the yaml file to the correct one
+        model = EncoderClassifier.from_hparams(source=self.pretrained_model_path, overrides={'pretrained_path': self.pretrained_model_path}, savedir='tmp')
+
+        return model        
+
+    def predict_class(self, model: EncoderClassifier, audio_path: str) -> str:
         '''
             takes in the audio filepath of the audio for inference
 
             returns the predicted class of the audio and the confidence of the prediction
         '''
 
-        # load the pretrained model, overrides the filepath in the yaml file to the correct one
-        model = EncoderClassifier.from_hparams(source=self.pretrained_model_path, overrides={'pretrained_path': self.pretrained_model_path}, savedir='tmp')
-
-        # print('model loaded')
-
         # load the audio for inference
         signal = model.load_audio(audio_path)
-        
-        # print('audio loaded')
 
         # get the prediction
         prediction = model.classify_batch(signal)
@@ -126,13 +127,16 @@ class InferManifest:
         # shift the language encoder file into the correct place
         self.shift_language_encoder_file()
 
+        # load the pretrained model here
+        model = self.load_pretrained_model()
+
         # iterate the list to get the individual entries
         for entry in tqdm(manifest_list):
             # replace the root audio filepath in the json entry so that the audio file can be found for inference (same path for inferencing locally but the remote clearml path is different)
             audio_path_for_inference = entry['audio_filepath'].replace(self.old_dir, self.inference_replaced_dir)
             
             # generate prediction 
-            pred_class, confidence = self.predict_class(audio_path_for_inference)
+            pred_class, confidence = self.predict_class(model=model, audio_path=audio_path_for_inference)
 
             # change the filepath to the speechbrain format
             edited_path = entry['audio_filepath'].replace(self.old_dir, self.new_manifest_replaced_dir)

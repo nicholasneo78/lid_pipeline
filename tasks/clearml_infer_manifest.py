@@ -11,6 +11,7 @@ task.execute_remotely(queue_name='compute', exit_process=True)
 
 from preprocessing.Train.infer_manifest import InferManifest, ConvertToStandardJSON
 import shutil
+import os
 
 # load the model that is trained previously
 get_model = Dataset.get(dataset_id='23ae6fbf80ec489ca3c17591552d6427')
@@ -29,6 +30,9 @@ dataset_root_path = get_dataset.get_local_copy()
 # move the config file into the save folder in order for the code to run correctly
 shutil.move(f'{hyperparams_root_path}/hyperparams.yaml', f'{model_root_path}/save/{ckpt_path}/hyperparams.yaml')
 
+# create a new directory in the remote folder to store the classified json file
+os.mkdir('output/')
+
 ### running the code
 infer = InferManifest(input_manifest_dir=f'{dataset_root_path}/mms_batch_1s/manifest.json', 
                       pretrained_model_root=f'{model_root_path}/save', 
@@ -36,9 +40,9 @@ infer = InferManifest(input_manifest_dir=f'{dataset_root_path}/mms_batch_1s/mani
                       threshold={'en': 0.6, 'ms': 0.6}, 
                       root_dir_remove_tmp=dataset_root_path, 
                       old_dir='/lid/datasets/mms/mms_silence_removed/', # the manifest path where the data path is being uploaded locally
-                      inference_replaced_dir=f'{dataset_root_path}/mms_batch_1s/',
+                      inference_replaced_dir=f'{dataset_root_path}/',
                       new_manifest_replaced_dir='{data_root}/', 
-                      output_manifest_dir='output/', 
+                      output_manifest_dir='output', 
                       data_batch='batch_1s',
                       iteration_num=1)
 
