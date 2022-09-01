@@ -34,7 +34,7 @@ hparams['embedding_model_path'] = f'{pretrained_embedding_path}/embedding_model.
 print(hparams['embedding_model_path'])
 
 # get the dataset
-dataset_small = Dataset.get(dataset_id='a8c2b7fc535c4cd3b7d900721a76a2b3')
+dataset_small = Dataset.get(dataset_id='a8872c8f04444a75b7e1436a72a534e4')
 dataset_small_path = dataset_small.get_local_copy()
 # overwrite the dataset path
 hparams['data_folder'] = dataset_small_path
@@ -105,7 +105,7 @@ test_stats = lid_brain.evaluate(
 dataset = Dataset.create(
     dataset_project='datasets/LID',
     dataset_name='trained_model',
-    parent_datasets=['a8c2b7fc535c4cd3b7d900721a76a2b3']
+    parent_datasets=['a8872c8f04444a75b7e1436a72a534e4']
 )
 
 dataset.add_files(path=hparams['output_folder'])

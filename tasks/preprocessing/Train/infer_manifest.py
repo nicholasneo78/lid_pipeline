@@ -16,7 +16,7 @@ class InferManifest:
         takes in a manifest file containing all the unannotated audio clips, produce the various manifest files based on languages that is based on confidence threshold
     '''
 
-    def __init__(self, input_manifest_dir: str, pretrained_model_root: str, ckpt_folder: str, threshold: Dict[str, float], root_dir_remove_tmp: str, old_dir: str, replaced_dir: str, output_manifest_dir: str, data_batch: str, iteration_num: int) -> None:
+    def __init__(self, input_manifest_dir: str, pretrained_model_root: str, ckpt_folder: str, threshold: Dict[str, float], root_dir_remove_tmp: str, old_dir: str, inference_replaced_dir: str, new_manifest_replaced_dir: str, output_manifest_dir: str, data_batch: str, iteration_num: int) -> None:
         '''
             input_manifest_dir: the manifest file with all the directories to the audio files
             pretrained_model_root: the pretrained speechbrain LID model root, ends with '.../save'
@@ -24,7 +24,8 @@ class InferManifest:
             threshold: the dictionary that contains the language as the key and the confidence threshold as the value to place the audio into the predicted language directory or the "others" directory (model not very confident about the prediction) 
             root_dir_remove_tmp: the root directory to remove all the unwanted .wav tmp files
             old_dir: the root or fixed path that is being replaced for the speechbrain format
-            replaced_dir: the root directory that is to be replaced for the speechbrain format
+            inference_replaced_dir: the root directory replaced so that the code can find the audio file for inference
+            new_manifest_replaced_dir: the root directory replaced to the speechbrain format for the newly produced manifest after the inference
             output_manifest_dir: the final manifest directory of the confident prediction
             data_batch: the data batch that is being inferenced
             iteration_num: the number of times the data has iterate already in the training loop
@@ -35,7 +36,8 @@ class InferManifest:
         self.threshold = threshold
         self.root_dir_remove_tmp = root_dir_remove_tmp
         self.old_dir = old_dir
-        self.replaced_dir = replaced_dir
+        self.inference_replaced_dir = inference_replaced_dir
+        self.new_manifest_replaced_dir = new_manifest_replaced_dir
         self.output_manifest_dir = output_manifest_dir
         self.data_batch = data_batch
         self.iteration_num = iteration_num
@@ -65,8 +67,10 @@ class InferManifest:
         try:
             # shift the encoder text file
             shutil.move(f'{self.pretrained_model_root}/language_encoder.txt', f'{self.pretrained_model_path}/label_encoder.txt')
+            print('shift model ok')
         except FileNotFoundError:
             # the language encoder file has been shifted
+            print('shift model NOT ok')
             pass
 
     def predict_class(self, audio_path: str) -> str:
@@ -79,8 +83,12 @@ class InferManifest:
         # load the pretrained model, overrides the filepath in the yaml file to the correct one
         model = EncoderClassifier.from_hparams(source=self.pretrained_model_path, overrides={'pretrained_path': self.pretrained_model_path}, savedir='tmp')
 
+        # print('model loaded')
+
         # load the audio for inference
         signal = model.load_audio(audio_path)
+        
+        # print('audio loaded')
 
         # get the prediction
         prediction = model.classify_batch(signal)
@@ -120,14 +128,17 @@ class InferManifest:
 
         # iterate the list to get the individual entries
         for entry in tqdm(manifest_list):
-            # generate prediction
-            pred_class, confidence = self.predict_class(entry['audio_filepath'])
+            # replace the root audio filepath in the json entry so that the audio file can be found for inference (same path for inferencing locally but the remote clearml path is different)
+            audio_path_for_inference = entry['audio_filepath'].replace(self.old_dir, self.inference_replaced_dir)
+            
+            # generate prediction 
+            pred_class, confidence = self.predict_class(audio_path_for_inference)
 
             # change the filepath to the speechbrain format
-            edit_path = entry['audio_filepath'].replace(self.old_dir, self.replaced_dir)
+            edited_path = entry['audio_filepath'].replace(self.old_dir, self.new_manifest_replaced_dir)
 
             # reorganise the dictionary storing the data into the speechbrain format
-            data = {'wav': edit_path,
+            data = {'wav': edited_path,
                     'language': pred_class,
                     'duration': entry['duration']}
 
@@ -182,7 +193,8 @@ if __name__ == '__main__':
                           threshold={'en': 0.6, 'ms': 0.6}, 
                           root_dir_remove_tmp='/lid/tasks/preprocessing/Train/', 
                           old_dir='/lid/datasets/mms/mms_silence_removed/', 
-                          replaced_dir='{data_root}/', 
+                          inference_replaced_dir='/lid/datasets/mms/mms_silence_removed/',
+                          new_manifest_replaced_dir='{data_root}/', 
                           output_manifest_dir='/lid/datasets/mms/mms_silence_removed/', 
                           data_batch='batch_1s', 
                           iteration_num=1)

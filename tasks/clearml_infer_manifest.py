@@ -13,10 +13,10 @@ from preprocessing.Train.infer_manifest import InferManifest, ConvertToStandardJ
 import shutil
 
 # load the model that is trained previously
-get_model = Dataset.get(dataset_id='a2818e2bbf1e419d97738aa42b6b73e5')
+get_model = Dataset.get(dataset_id='23ae6fbf80ec489ca3c17591552d6427')
 model_root_path = get_model.get_local_copy()
 
-ckpt_path = 'CKPT+2022-08-30+06-09-58+00'
+ckpt_path = 'CKPT+2022-08-31+11-25-40+00'
 
 # load the hyperparams config file that is needed for the inference
 get_hyperparams = Dataset.get(dataset_id='22ffe0aba2594c3abaf3251f2b16af5c')
@@ -36,7 +36,8 @@ infer = InferManifest(input_manifest_dir=f'{dataset_root_path}/mms_batch_1s/mani
                       threshold={'en': 0.6, 'ms': 0.6}, 
                       root_dir_remove_tmp=dataset_root_path, 
                       old_dir='/lid/datasets/mms/mms_silence_removed/', # the manifest path where the data path is being uploaded locally
-                      replaced_dir='{data_root}/', 
+                      inference_replaced_dir=f'{dataset_root_path}/mms_batch_1s/',
+                      new_manifest_replaced_dir='{data_root}/', 
                       output_manifest_dir='output/', 
                       data_batch='batch_1s',
                       iteration_num=1)

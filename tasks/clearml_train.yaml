@@ -7,7 +7,7 @@
 #  * Pavlo Ruban
 # #################################hparams
 # Seed needs to be set at top of yaml, before objects with parameters are made
-seed: 2001
+seed: 2010
 __set_seed: !apply:torch.manual_seed [!ref <seed>]
 
 # Set up folders for reading from and writing to
