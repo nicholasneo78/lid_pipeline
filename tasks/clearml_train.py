@@ -13,40 +13,53 @@ sb.utils.distributed.ddp_init_group(run_opts)
 with open(hparams_file) as fin:
     hparams = load_hyperpyyaml(fin, overrides)
 
+### configs for starting clearml ###
+PROJ_NAME = 'LID'
+TASK_NAME = 'train'
+DOCKER_IMG = 'nicholasneo78/sb_lid:v0.0.2'
+QUEUE = 'compute'
+####################################
+
+### configs to get the clearml dataset ID #############
+PRETRAINED_EMBEDDING_ID = '45e011de2c0d4c87b39656e0e3f61a24'
+DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
+DATASET_PROJ_NAME = 'datasets/LID'
+DATASET_NAME = 'trained_model'
+#######################################################
+
 # start clearml
-task = Task.init(project_name='LID', task_name='train', output_uri='s3://experiment-logging')
+task = Task.init(project_name=PROJ_NAME, task_name=TASK_NAME, output_uri='s3://experiment-logging')
 task.set_base_docker(
-    docker_image='nicholasneo78/sb_lid:v0.0.2',
+    docker_image=DOCKER_IMG,
 )
 
 # execute clearml
-task.execute_remotely(queue_name='compute', exit_process=True)
+task.execute_remotely(queue_name=QUEUE, exit_process=True)
 
 from preprocessing.Train.train import LID, dataio_prep
 
 # get the pretrained embedding model
-pretrained_embedding = Dataset.get(dataset_id='45e011de2c0d4c87b39656e0e3f61a24')
+pretrained_embedding = Dataset.get(dataset_id=PRETRAINED_EMBEDDING_ID)
 pretrained_embedding_path = pretrained_embedding.get_local_copy()
 
 # overwrite the embedding path 
-print(hparams['embedding_model_path'])
+print(f'Before overriding: {hparams["embedding_model_path"]}')
 hparams['embedding_model_path'] = f'{pretrained_embedding_path}/embedding_model.ckpt'
-print(hparams['embedding_model_path'])
+print(f'After overriding: {hparams["embedding_model_path"]}')
 
 # get the dataset
-dataset_small = Dataset.get(dataset_id='a8872c8f04444a75b7e1436a72a534e4')
+dataset_small = Dataset.get(dataset_id=DATASET_ID)
 dataset_small_path = dataset_small.get_local_copy()
+
 # overwrite the dataset path
 hparams['data_folder'] = dataset_small_path
-
-dataset_task = Task.get_task(dataset_small.id)
 
 # load dataset manifest path, the train dev and test set
 hparams['train_annotation'] = f'{dataset_small_path}/train_manifest_sb.json'
 hparams['dev_annotation'] = f'{dataset_small_path}/dev_manifest_sb.json'
 hparams['test_annotation'] = f'{dataset_small_path}/test_manifest_sb.json'
 
-### start running the code
+### start running the code ###
 
 # Create experiment directory
 sb.create_experiment_directory(
@@ -64,7 +77,6 @@ if hparams["use_tensorboard"]:
 
 # Create dataset objects "train", "dev", and "test" and language_encoder
 datasets, language_encoder = dataio_prep(hparams)
-
 hparams['pretrainer'].paths['embedding_model'] = hparams['embedding_model_path']
 
 # Fetch and load pretrained modules
@@ -103,9 +115,9 @@ test_stats = lid_brain.evaluate(
 
 # create the dataset to store the pretrained model
 dataset = Dataset.create(
-    dataset_project='datasets/LID',
-    dataset_name='trained_model',
-    parent_datasets=['a8872c8f04444a75b7e1436a72a534e4']
+    dataset_project=DATASET_PROJ_NAME,
+    dataset_name=DATASET_NAME,
+    parent_datasets=[DATASET_ID]
 )
 
 dataset.add_files(path=hparams['output_folder'])
