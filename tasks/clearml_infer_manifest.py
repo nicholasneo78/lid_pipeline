@@ -2,7 +2,9 @@ from clearml import Task, Dataset
 
 ### configs for starting clearml ###
 PROJ_NAME = 'LID'
-TASK_NAME = 'infer'
+ITER = 1
+DATA = '1s'
+TASK_NAME = f'infer_manifest_batch_{DATA}_iteration_{ITER}'
 DOCKER_IMG = 'nicholasneo78/sb_lid:v0.0.2'
 QUEUE = 'compute'
 ####################################
@@ -18,8 +20,8 @@ MANIFEST_ROOT = 'output'
 ### configs to execute the inference code ###
 THRESHOLD_DICT = {'en': 0.6, 'ms': 0.6}
 OLD_DIR = '/lid/datasets/mms/mms_silence_removed/'
-DATA_BATCH = 'batch_2s'
-ITERATION = 'iteration_1'
+DATA_BATCH = f'batch_{DATA}'
+ITERATION = f'iteration_{ITER}'
 LANG_LIST = ['en', 'ms', 'others']
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'inference_{DATA_BATCH}_{ITERATION}'
@@ -79,6 +81,8 @@ for lang in LANG_LIST:
     try:
         c = ConvertToStandardJSON(input_manifest=LANG_PATH, output_manifest=LANG_PATH)
         c()
+        # rename the file into standard naming format
+        os.rename(LANG_PATH, f'{MANIFEST_ROOT}/{lang}.json')
     except FileNotFoundError:
         print(f'no audio predicted for this language - {lang}')
         continue

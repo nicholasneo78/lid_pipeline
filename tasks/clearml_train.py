@@ -15,7 +15,8 @@ with open(hparams_file) as fin:
 
 ### configs for starting clearml ###
 PROJ_NAME = 'LID'
-TASK_NAME = 'train'
+ITER = 1
+TASK_NAME = f'train_iteration_{ITER}'
 DOCKER_IMG = 'nicholasneo78/sb_lid:v0.0.2'
 QUEUE = 'compute'
 ####################################
@@ -23,9 +24,15 @@ QUEUE = 'compute'
 ### configs to get the clearml dataset ID #############
 PRETRAINED_EMBEDDING_ID = '45e011de2c0d4c87b39656e0e3f61a24'
 DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
+MANIFEST_ID = 'b1e214ce08804ad08684ffc09afca701'
 DATASET_PROJ_NAME = 'datasets/LID'
-DATASET_NAME = 'trained_model'
+DATASET_NAME = f'trained_model_iteration_{ITER}'
 #######################################################
+
+### manifest filename ###
+TRAIN_MANIFEST = 'train_manifest_sb.json'
+DEV_MANIFEST = 'dev_manifest_sb.json'
+TEST_MANIFEST = 'test_manifest_sb.json'
 
 # start clearml
 task = Task.init(project_name=PROJ_NAME, task_name=TASK_NAME, output_uri='s3://experiment-logging')
@@ -51,13 +58,17 @@ print(f'After overriding: {hparams["embedding_model_path"]}')
 dataset_small = Dataset.get(dataset_id=DATASET_ID)
 dataset_small_path = dataset_small.get_local_copy()
 
+# get the manifests to the dataset
+manifest = Dataset.get(dataset_id=MANIFEST_ID)
+manifest_path = manifest.get_local_copy()
+
 # overwrite the dataset path
 hparams['data_folder'] = dataset_small_path
 
 # load dataset manifest path, the train dev and test set
-hparams['train_annotation'] = f'{dataset_small_path}/train_manifest_sb.json'
-hparams['dev_annotation'] = f'{dataset_small_path}/dev_manifest_sb.json'
-hparams['test_annotation'] = f'{dataset_small_path}/test_manifest_sb.json'
+hparams['train_annotation'] = f'{manifest_path}/{TRAIN_MANIFEST}'
+hparams['dev_annotation'] = f'{manifest_path}/{DEV_MANIFEST}'
+hparams['test_annotation'] = f'{manifest_path}/{TEST_MANIFEST}'
 
 ### start running the code ###
 
