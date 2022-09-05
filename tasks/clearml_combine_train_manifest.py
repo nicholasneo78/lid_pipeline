@@ -22,7 +22,7 @@ MANIFEST_ROOT = 'output'
 ### configs to store the new dataset to save the updated train manifest ###
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'combine_iteration_{ITER}'
-DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
+DATASET_ID = 'b1e214ce08804ad08684ffc09afca701' # 'a8872c8f04444a75b7e1436a72a534e4'
 ######################################
 
 # start clearml
