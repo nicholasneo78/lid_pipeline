@@ -1,13 +1,16 @@
 from clearml import Task, Dataset
 import sys
-import speechbrain as sb    
-from hyperpyyaml import load_hyperpyyaml
+#import speechbrain as sb    
+from preprocessing.Modules.parse_args import parse_arguments
+from preprocessing.Modules.ddp import ddp_init_group
+# from hyperpyyaml import load_hyperpyyaml
+from preprocessing.Modules.load_hyperpyyaml import load_hyperpyyaml
 
 # Reading command line arguments
-hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
+hparams_file, run_opts, overrides = parse_arguments(sys.argv[1:])
 
 # Initialize ddp (useful only for multi-GPU DDP training).
-sb.utils.distributed.ddp_init_group(run_opts)
+ddp_init_group(run_opts)
 
 # Load hyperparameters file with command-line overrides.
 with open(hparams_file) as fin:
@@ -24,13 +27,13 @@ QUEUE = 'compute'
 ### configs to get the clearml dataset ID #############
 PRETRAINED_EMBEDDING_ID = '45e011de2c0d4c87b39656e0e3f61a24'
 DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
-MANIFEST_ID = 'b1e214ce08804ad08684ffc09afca701' 
+MANIFEST_ID = '71ab138ab92b4969a4e05a9691ef9066'
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'trained_model_iteration_{ITER}'
 #######################################################
 
 ### manifest filename ###
-TRAIN_MANIFEST = 'train_manifest_sb_iteration_1.json'
+TRAIN_MANIFEST = f'train_manifest_sb_iteration_{ITER-1}.json'
 DEV_MANIFEST = 'dev_manifest_sb.json'
 TEST_MANIFEST = 'test_manifest_sb.json'
 

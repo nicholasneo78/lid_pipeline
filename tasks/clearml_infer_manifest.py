@@ -2,23 +2,23 @@ from clearml import Task, Dataset
 
 ### configs for starting clearml ###
 PROJ_NAME = 'LID'
-ITER = 1
-DATA = '1s'
+ITER = 2
+DATA = '2s'
 TASK_NAME = f'infer_manifest_batch_{DATA}_iteration_{ITER}'
 DOCKER_IMG = 'nicholasneo78/sb_lid:v0.0.2'
 QUEUE = 'compute'
 ####################################
 
 ### configs to get the clearml dataset ID #############
-PRETRAINED_MODEL_ID = '23ae6fbf80ec489ca3c17591552d6427'
+PRETRAINED_MODEL_ID = 'c431902551504518bf3e5c3637e2342a' # '23ae6fbf80ec489ca3c17591552d6427'
 HYPERPARAMS_YAML_ID = '22ffe0aba2594c3abaf3251f2b16af5c'
-DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
-CKPT_PATH = 'CKPT+2022-08-31+11-25-40+00'
+DATASET_ID = 'de7b2ca7374c4291993f1300695a2015'
+CKPT_PATH = 'CKPT+2022-09-05+07-55-26+00' # 'CKPT+2022-08-31+11-25-40+00'
 MANIFEST_ROOT = 'output'
 #######################################################
 
 ### configs to execute the inference code ###
-THRESHOLD_DICT = {'en': 0.6, 'ms': 0.6}
+THRESHOLD_DICT = {'en': 0.62, 'ms': 0.6}
 OLD_DIR = '/lid/datasets/mms/mms_silence_removed/'
 DATA_BATCH = f'batch_{DATA}'
 ITERATION = f'iteration_{ITER}'
@@ -26,6 +26,10 @@ LANG_LIST = ['en', 'ms', 'others']
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'inference_{DATA_BATCH}_{ITERATION}'
 ###############################################
+
+### switch to see if the inference is done the first time or not ###
+INITIAL_INFER = False
+####################################################################
 
 # start clearml
 task = Task.init(project_name=PROJ_NAME, task_name=TASK_NAME, output_uri='s3://experiment-logging')
@@ -58,8 +62,15 @@ shutil.move(f'{hyperparams_root_path}/hyperparams.yaml', f'{model_root_path}/sav
 # create a new directory in the remote folder to store the classified json file
 os.mkdir(f'{MANIFEST_ROOT}/')
 
+if INITIAL_INFER:
+    input_dir = f'{dataset_root_path}/mms_{DATA_BATCH}/manifest.json'
+else:
+    # move the manifest file into the subfolder
+    shutil.move(f'{dataset_root_path}/others.json', f'{dataset_root_path}/mms_{DATA_BATCH}/others.json')
+    input_dir = f'{dataset_root_path}/mms_{DATA_BATCH}/others.json'
+
 ### executing the code ###
-infer = InferManifest(input_manifest_dir=f'{dataset_root_path}/mms_{DATA_BATCH}/manifest.json', 
+infer = InferManifest(input_manifest_dir=input_dir, 
                       pretrained_model_root=f'{model_root_path}/save', 
                       ckpt_folder=CKPT_PATH,
                       threshold=THRESHOLD_DICT, 
@@ -76,6 +87,11 @@ infer()
 # convert json to standard format
 for lang in LANG_LIST:
     LANG_PATH = f'{MANIFEST_ROOT}/{DATA_BATCH}_{ITERATION}_{lang}.json'
+
+    # skip the conversion if it falls in the 'others' class
+    if lang == 'others':
+        os.rename(LANG_PATH, f'{MANIFEST_ROOT}/{lang}.json')
+        continue
 
     # in case there is no prediction for a certain language, hence no file produced
     try:

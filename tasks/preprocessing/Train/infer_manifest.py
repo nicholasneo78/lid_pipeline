@@ -138,13 +138,19 @@ class InferManifest:
             # generate prediction 
             pred_class, confidence = self.predict_class(model=model, audio_path=audio_path_for_inference)
 
-            # change the filepath to the speechbrain format
-            edited_path = entry['audio_filepath'].replace(self.old_dir, self.new_manifest_replaced_dir)
+            # branch to differentiate the 'others' manifest from the languages one
+            if pred_class == 'others':
+                data = {'audio_filepath': entry['audio_filepath'],
+                        'duration': entry['duration'],
+                        'text': ''}
+            else:
+                # change the filepath to the speechbrain format
+                edited_path = entry['audio_filepath'].replace(self.old_dir, self.new_manifest_replaced_dir)
 
-            # reorganise the dictionary storing the data into the speechbrain format
-            data = {'wav': edited_path,
-                    'language': pred_class,
-                    'duration': entry['duration']}
+                # reorganise the dictionary storing the data into the speechbrain format
+                data = {'wav': edited_path,
+                        'language': pred_class,
+                        'duration': entry['duration']}
 
             # write to json file
             with open(f'{self.output_manifest_dir}/{self.data_batch}_{self.iteration}_{pred_class}.json', 'a+', encoding='utf-8') as f:
@@ -204,11 +210,8 @@ if __name__ == '__main__':
                           iteration='iteration_1')
 
     EN_PATH = '/lid/datasets/mms/mms_silence_removed/batch_1s_iteration_1_en.json'
-    OTHERS_PATH = '/lid/datasets/mms/mms_silence_removed/batch_1s_iteration_1_others.json'
 
     c_en = ConvertToStandardJSON(input_manifest=EN_PATH, output_manifest=EN_PATH)
-    c_others = ConvertToStandardJSON(input_manifest=OTHERS_PATH, output_manifest=OTHERS_PATH)
 
     infer()
     c_en()
-    c_others()

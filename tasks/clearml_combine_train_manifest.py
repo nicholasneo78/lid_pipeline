@@ -2,7 +2,7 @@ from clearml import Task, Dataset
 
 ### configs for starting clearml ###
 PROJ_NAME = 'LID'
-ITER = 1
+ITER = 2
 TASK_NAME = f'combine_manifest_iteration_{ITER}'
 DOCKER_IMG = 'nicholasneo78/sb_lid:v0.0.2'
 QUEUE = 'compute'
@@ -13,8 +13,8 @@ QUEUE = 'compute'
 ORIGINAL_TRAIN_ID = 'b1e214ce08804ad08684ffc09afca701'
 
 # id of the batches of data from the previous inference
-MANIFEST_ID_LIST = ['d79acdaf20624426af1a2b151e5a6b88', 
-                    '23d731b9fc83483d8c3e90fa422153bd']
+MANIFEST_ID_LIST = ['d54ffb239345410fb7e37e0a43b44ea3', 
+                    '898dcc04c9ad476e8071b0d7ffd3b45b']
 SUFFIX = '' # f'_iteration_{ITER}'  # for the subsequent iteration of the train data
 MANIFEST_ROOT = 'output'
 ######################################
