@@ -6,7 +6,7 @@ import inspect
 import shutil
 import yaml
 from datetime import date
-from load_hyperpyyaml import resolve_references
+from preprocessing.Modules.load_hyperpyyaml import resolve_references
 import collections
 import subprocess
 
