@@ -5,6 +5,7 @@ from preprocessing.Modules.parse_args import parse_arguments
 from preprocessing.Modules.ddp import ddp_init_group
 # from hyperpyyaml import load_hyperpyyaml
 from preprocessing.Modules.load_hyperpyyaml import load_hyperpyyaml
+from preprocessing.Modules.create_experiment_directory import create_experiment_directory, run_on_main
 
 # Reading command line arguments
 hparams_file, run_opts, overrides = parse_arguments(sys.argv[1:])
@@ -76,14 +77,15 @@ hparams['test_annotation'] = f'{manifest_path}/{TEST_MANIFEST}'
 ### start running the code ###
 
 # Create experiment directory
-sb.create_experiment_directory(
+create_experiment_directory(
     experiment_directory=hparams["output_folder"],
     hyperparams_to_save=hparams_file,
     overrides=overrides,
 )
 
 if hparams["use_tensorboard"]:
-    from speechbrain.utils.train_logger import TensorboardLogger
+    #from speechbrain.utils.train_logger import TensorboardLogger
+    from preprocessing.Modules.train_logger import TensorboardLogger
 
     hparams["tensorboard_train_logger"] = TensorboardLogger(
         hparams["tensorboard_logs"]
@@ -94,7 +96,7 @@ datasets, language_encoder = dataio_prep(hparams)
 hparams['pretrainer'].paths['embedding_model'] = hparams['embedding_model_path']
 
 # Fetch and load pretrained modules
-sb.utils.distributed.run_on_main(hparams["pretrainer"].collect_files)
+run_on_main(hparams["pretrainer"].collect_files)
 hparams["pretrainer"].load_collected(device=run_opts["device"])
 
 # Initialize the Brain object to prepare for mask training.
