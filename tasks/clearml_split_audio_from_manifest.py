@@ -67,3 +67,15 @@ for path in full_manifest_path_list:
                               data_is_others=True,
                               is_clearml=True)
     shift_others()
+
+# create a datasets to store the data in the final edited form
+dataset = Dataset.create(
+    dataset_project=DATASET_PROJ_NAME,
+    dataset_name=DATASET_NAME,
+)
+
+dataset.add_files(path=f'{MANIFEST_ROOT}/')
+dataset.upload(output_url="s3://experiment-logging")
+dataset.finalize()
+
+print('Done')

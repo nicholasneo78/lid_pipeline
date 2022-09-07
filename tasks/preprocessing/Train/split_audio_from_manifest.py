@@ -93,7 +93,7 @@ class SplitAudio:
 
         # remove the last element as it is not a directory, and save the last element as a separate variable
         dir_file = dir_split_list[-1]
-        dir_split_list = dir_split_list[4:] # remove the clearml front path
+        dir_split_list = dir_split_list[4:-1] # remove the clearml front path
 
         # merge the list into string again
         directory_edited = '/'.join(dir_split_list)
@@ -108,17 +108,18 @@ class SplitAudio:
         directory_edited_split_list = [d + '/' for d in directory_edited_split_list_]
 
         # concatenate the first 4 elements in the list, this will be the creation of the base folder
-        base_idx = 4
+        base_idx = 0
 
         # iterate the creation of the nested directory
         while(base_idx <= len(directory_edited_split_list)):
             self.create_new_dir(''.join(directory_edited_split_list[:base_idx]))
+            # print(''.join(directory_edited_split_list[:base_idx]))
 
             # increment the count
             base_idx += 1
 
         # returns the edited file path and the audio filename
-        return directory_edited, dir_file
+        return f'{self.preprocessed_dir}/{directory_edited}', dir_file
 
     def split(self) -> None:
         '''
