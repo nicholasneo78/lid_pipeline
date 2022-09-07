@@ -88,8 +88,12 @@ class SplitAudio:
         # split the directory based on the the delimiter '/'
         dir_split_list = directory.split('/')
         
+        print('splitted')
         # remove the '' if there is (usually have when an absolute path is passed)
-        dir_split_list.remove('')
+        try:
+            dir_split_list.remove('')
+        except:
+            pass
 
         # remove the last element as it is not a directory, and save the last element as a separate variable
         dir_file = dir_split_list[-1]
