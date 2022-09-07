@@ -206,10 +206,10 @@ if __name__ == '__main__':
                           inference_replaced_dir='/lid/datasets/mms/mms_silence_removed/',
                           new_manifest_replaced_dir='{data_root}/', 
                           output_manifest_dir='/lid/datasets/mms/mms_silence_removed/', 
-                          data_batch='batch_1s', 
+                          data_batch='batch_2s', 
                           iteration='iteration_1')
 
-    EN_PATH = '/lid/datasets/mms/mms_silence_removed/batch_1s_iteration_1_en.json'
+    EN_PATH = '/lid/datasets/mms/mms_silence_removed/batch_2s_iteration_1_en.json'
 
     c_en = ConvertToStandardJSON(input_manifest=EN_PATH, output_manifest=EN_PATH)
 

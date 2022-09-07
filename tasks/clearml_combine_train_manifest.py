@@ -22,7 +22,7 @@ MANIFEST_ROOT = 'output'
 ### configs to store the new dataset to save the updated train manifest ###
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'combine_iteration_{ITER}'
-DATASET_ID = 'b1e214ce08804ad08684ffc09afca701' # 'a8872c8f04444a75b7e1436a72a534e4'
+PARENT_DATASET_ID = 'b1e214ce08804ad08684ffc09afca701' #'a8872c8f04444a75b7e1436a72a534e4'
 ######################################
 
 # start clearml
@@ -78,7 +78,7 @@ c()
 dataset = Dataset.create(
     dataset_project=DATASET_PROJ_NAME,
     dataset_name=DATASET_NAME,
-    parent_datasets=[DATASET_ID]
+    parent_datasets=[PARENT_DATASET_ID]
 )
 
 dataset.add_files(path=f'{MANIFEST_ROOT}/')
