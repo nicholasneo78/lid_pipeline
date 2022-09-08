@@ -84,15 +84,18 @@ class SplitAudio:
         
             directory: the root directory of the audio file
         '''
-
+        # print('before splitting')
+        # print(directory)
         # split the directory based on the the delimiter '/'
         dir_split_list = directory.split('/')
+        # print(dir_split_list)
         
-        print('splitted')
+        # print('splitted')
         # remove the '' if there is (usually have when an absolute path is passed)
         try:
             dir_split_list.remove('')
         except:
+            print('WRONG VALUES')
             pass
 
         # remove the last element as it is not a directory, and save the last element as a separate variable

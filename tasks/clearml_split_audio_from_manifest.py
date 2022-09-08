@@ -65,7 +65,7 @@ os.mkdir(f'{MANIFEST_ROOT}/')
 
 # call the class to do the shifting of files for 'en' class
 shift_en = SplitAudio(manifest_dir=f'{get_train_manifest_root_path}/train_manifest_sb_iteration_{ITER}.json', 
-                      original_root_dir='/lid/datasets/mms/mms_silence_removed', 
+                      original_root_dir='{data_root}', 
                       replaced_root_dir=f'{get_dataset_root_path}', 
                       silence_removed_dir=None,
                       preprocessed_dir=f'{MANIFEST_ROOT}', 
