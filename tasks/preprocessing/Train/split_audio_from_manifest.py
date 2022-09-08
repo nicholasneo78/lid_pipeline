@@ -84,13 +84,13 @@ class SplitAudio:
         
             directory: the root directory of the audio file
         '''
-        # print('before splitting')
-        # print(directory)
+        print('before splitting')
+        print(directory)
         # split the directory based on the the delimiter '/'
         dir_split_list = directory.split('/')
-        # print(dir_split_list)
+        print(dir_split_list)
         
-        # print('splitted')
+        print('splitted')
         # remove the '' if there is (usually have when an absolute path is passed)
         try:
             dir_split_list.remove('')
@@ -174,7 +174,7 @@ class SplitAudio:
                 initial_filepath = initial_filepath_raw.replace(self.original_root_dir, self.replaced_root_dir)
 
                 # create the nested directory for the preprocessed audio
-                edited_dir, filename = self.create_nested_dir(f'{initial_filepath}')
+                edited_dir, filename = self.create_nested_dir_clearml(f'{initial_filepath}')
 
                 # create a new nested directory based on the the language for that channel
                 self.create_new_dir(f'{edited_dir}/{language}/')
