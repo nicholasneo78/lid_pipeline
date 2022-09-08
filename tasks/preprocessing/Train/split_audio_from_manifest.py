@@ -181,7 +181,8 @@ class SplitAudio:
 
                 # load and export the audio
                 soundfile = pydub.AudioSegment.from_wav(initial_filepath)
-                soundfile.export(f'{edited_dir}/{language}/{filename}', format='wav')
+                soundfile.export(f'{edited_dir}/{filename}', format='wav')
+                # soundfile.export(f'{edited_dir}/{language}/{filename}', format='wav')
 
     def __call__(self) -> None:
         return self.split()
