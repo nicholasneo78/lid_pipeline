@@ -10,7 +10,7 @@ QUEUE = 'compute'
 
 ### configs to get the clearml dataset ID ###
 DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
-TRAIN_MANIFEST_ID = 'abeee357e9f14dbbb3729cbfaa032d4c'
+TRAIN_MANIFEST_ID = '2661ea59a4e343c0b253d9c9edd16794'
 MANIFEST_ID_LIST = ['d54ffb239345410fb7e37e0a43b44ea3', 
                     '898dcc04c9ad476e8071b0d7ffd3b45b']
 
@@ -18,7 +18,7 @@ MANIFEST_ROOT = 'output'
 #############################################
 
 ### configs to store the new dataset to save the updated train manifest ###
-DATASET_PROJ_NAME = 'datasets/LID'
+DATASET_PROJ_NAME = 'datasets/LID'# soundfile.export(f'{edited_dir}/{filename}', format='wav')
 DATASET_NAME = 'split_audio'
 ###########################################################################
 

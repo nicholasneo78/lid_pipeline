@@ -181,8 +181,12 @@ class SplitAudio:
 
                 # load and export the audio
                 soundfile = pydub.AudioSegment.from_wav(initial_filepath)
-                soundfile.export(f'{edited_dir}/{filename}', format='wav')
-                # soundfile.export(f'{edited_dir}/{language}/{filename}', format='wav')
+
+                # check if the directory is the originally trained data or it is added in during inference
+                if edited_dir.find('mms_batch_train') != -1:
+                    soundfile.export(f'{edited_dir}/{filename}', format='wav')
+                else:
+                    soundfile.export(f'{edited_dir}/{language}/{filename}', format='wav')
 
     def __call__(self) -> None:
         return self.split()

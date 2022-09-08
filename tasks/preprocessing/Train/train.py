@@ -153,6 +153,7 @@ class LID(sb.Brain):
         if stage == sb.Stage.TRAIN:
             self.train_stats = {
                 "loss": stage_loss,
+                "acc": self.acc_metric.summarize("average")
             }
 
         # Summarize the statistics from the stage for record-keeping.
