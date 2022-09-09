@@ -94,14 +94,23 @@ class LID(sb.Brain):
         # argmax the tensor
         predictions_squeeze = torch.argmax(predictions_squeeze_raw, dim=1)
         # unsqueeze the tensor again to the correct form
-        predictions_binary = torch.unsqueeze(predictions_squeeze, dim=1)
+        # predictions_binary = torch.unsqueeze(predictions_squeeze, dim=1)
+        predictions_binary = predictions_squeeze
 
-        print(f'Pred: {predictions}')
+        if stage == sb.Stage.TRAIN:
+            print(f'Pred: {predictions}')
+        else:
+            print(f'Pred-edit: {predictions_binary}')
+
         print(f'Lens: {lens}')
         print(f'Batch ID: {batch.id}')
 
         targets = batch.language_encoded.data
-        print(f'Target: {targets}')
+        if stage == sb.Stage.TRAIN:
+            print(f'Target: {targets}')
+        else:
+            targets_squeeze = torch.squeeze(targets, dim=1)
+            print(f'Target: {targets_squeeze}')
 
         # Concatenate labels (due to data augmentation)
         if stage == sb.Stage.TRAIN:
@@ -119,7 +128,8 @@ class LID(sb.Brain):
             self.error_metrics.append(batch.id, predictions, targets, lens)
 
             # self.f_metrics.append(batch.id, predictions, targets, lens)
-            self.f_metrics.append(batch.id, predictions_binary, targets)
+            self.f_metrics.append(batch.id, predictions_binary, targets_squeeze)
+            # print(batch.id, predictions_binary, targets)
 
             self.acc_metric.append(
                 batch.id, predict=predictions, target=targets, lengths=lens
@@ -141,7 +151,7 @@ class LID(sb.Brain):
         # Set up evaluation-only statistics trackers
         if stage != sb.Stage.TRAIN:
             self.error_metrics = self.hparams.error_stats()
-            self.f_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=1)
+            self.f_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=0)
 
             def accuracy_value(predict, target, lengths):
                 """Computes Accuracy"""
@@ -176,7 +186,7 @@ class LID(sb.Brain):
         else:
             valid_stats = {
                 "loss": stage_loss,
-                "eer": self.f_metrics.summarize(field='EER'),
+                #"eer": self.f_metrics.summarize(field='EER'),
                 "f_score": self.f_metrics.summarize(field='F-score'),
                 "error": self.error_metrics.summarize("average"),
                 "acc": self.acc_metric.summarize("average")
