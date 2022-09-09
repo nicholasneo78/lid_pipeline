@@ -89,8 +89,19 @@ class LID(sb.Brain):
 
         predictions, lens = inputs
 
-        targets = batch.language_encoded.data
+        # squeeze the "predictions" tensor for the f_metrics and EER to work with as the prediction and the target has to be in the same dimension
+        predictions_squeeze_raw = torch.squeeze(predictions, dim=1)
+        # argmax the tensor
+        predictions_squeeze = torch.argmax(predictions_squeeze_raw, dim=1)
+        # unsqueeze the tensor again to the correct form
+        predictions_binary = torch.unsqueeze(predictions_squeeze, dim=1)
 
+        print(f'Pred: {predictions}')
+        print(f'Lens: {lens}')
+        print(f'Batch ID: {batch.id}')
+
+        targets = batch.language_encoded.data
+        print(f'Target: {targets}')
 
         # Concatenate labels (due to data augmentation)
         if stage == sb.Stage.TRAIN:
@@ -99,11 +110,16 @@ class LID(sb.Brain):
 
         loss = self.hparams.compute_cost(predictions, targets)
 
+        print(f'Loss: {loss}')
+
         if hasattr(self.hparams.lr_annealing, "on_batch_end"):
             self.hparams.lr_annealing.on_batch_end(self.optimizer)
 
         if stage != sb.Stage.TRAIN:
             self.error_metrics.append(batch.id, predictions, targets, lens)
+
+            # self.f_metrics.append(batch.id, predictions, targets, lens)
+            self.f_metrics.append(batch.id, predictions_binary, targets)
 
             self.acc_metric.append(
                 batch.id, predict=predictions, target=targets, lengths=lens
@@ -125,6 +141,7 @@ class LID(sb.Brain):
         # Set up evaluation-only statistics trackers
         if stage != sb.Stage.TRAIN:
             self.error_metrics = self.hparams.error_stats()
+            self.f_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=1)
 
             def accuracy_value(predict, target, lengths):
                 """Computes Accuracy"""
@@ -152,14 +169,15 @@ class LID(sb.Brain):
         # Store the train loss until the validation stage.
         if stage == sb.Stage.TRAIN:
             self.train_stats = {
-                "loss": stage_loss,
-                "acc": self.acc_metric.summarize("average")
+                "loss": stage_loss
             }
 
         # Summarize the statistics from the stage for record-keeping.
         else:
             valid_stats = {
                 "loss": stage_loss,
+                "eer": self.f_metrics.summarize(field='EER'),
+                "f_score": self.f_metrics.summarize(field='F-score'),
                 "error": self.error_metrics.summarize("average"),
                 "acc": self.acc_metric.summarize("average")
             }
