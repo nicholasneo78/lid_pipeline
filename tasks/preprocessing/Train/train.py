@@ -89,13 +89,14 @@ class LID(sb.Brain):
 
         predictions, lens = inputs
 
-        # squeeze the "predictions" tensor for the f_metrics and EER to work with as the prediction and the target has to be in the same dimension
+        # squeeze the "predictions" tensor for the binary_metrics and EER to work with as the prediction and the target has to be in the same dimension
         predictions_squeeze_raw = torch.squeeze(predictions, dim=1)
         # argmax the tensor
-        predictions_squeeze = torch.argmax(predictions_squeeze_raw, dim=1)
+        # predictions_squeeze = torch.argmax(predictions_squeeze_raw, dim=1)
         # unsqueeze the tensor again to the correct form
         # predictions_binary = torch.unsqueeze(predictions_squeeze, dim=1)
-        predictions_binary = predictions_squeeze
+        # predictions_binary = predictions_squeeze
+        predictions_binary = torch.argmax(predictions_squeeze_raw, dim=1)
 
         if stage == sb.Stage.TRAIN:
             print(f'Pred: {predictions}')
@@ -127,8 +128,8 @@ class LID(sb.Brain):
         if stage != sb.Stage.TRAIN:
             self.error_metrics.append(batch.id, predictions, targets, lens)
 
-            # self.f_metrics.append(batch.id, predictions, targets, lens)
-            self.f_metrics.append(batch.id, predictions_binary, targets_squeeze)
+            # self.binary_metrics.append(batch.id, predictions, targets, lens)
+            self.binary_metrics.append(batch.id, predictions_binary, targets_squeeze)
             # print(batch.id, predictions_binary, targets)
 
             self.acc_metric.append(
@@ -151,7 +152,7 @@ class LID(sb.Brain):
         # Set up evaluation-only statistics trackers
         if stage != sb.Stage.TRAIN:
             self.error_metrics = self.hparams.error_stats()
-            self.f_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=0)
+            self.binary_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=0)
 
             def accuracy_value(predict, target, lengths):
                 """Computes Accuracy"""
@@ -186,10 +187,16 @@ class LID(sb.Brain):
         else:
             valid_stats = {
                 "loss": stage_loss,
-                #"eer": self.f_metrics.summarize(field='EER'),
-                "f_score": self.f_metrics.summarize(field='F-score'),
                 "error": self.error_metrics.summarize("average"),
-                "acc": self.acc_metric.summarize("average")
+                "acc": self.acc_metric.summarize("average"),
+                "F1": self.binary_metrics.summarize(field='F-score'),
+                "EER": self.binary_metrics.summarize(field='DER'),
+                "precision": self.binary_metrics.summarize(field='precision'),
+                "recall": self.binary_metrics.summarize(field='recall'),
+                "TP": self.binary_metrics.summarize(field='TP'),
+                "TN": self.binary_metrics.summarize(field='TN'),
+                "FP": self.binary_metrics.summarize(field='FP'),
+                "FN": self.binary_metrics.summarize(field='FN'),
             }
 
         # At the end of validation...
