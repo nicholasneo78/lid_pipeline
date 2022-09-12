@@ -5,7 +5,7 @@ import logging
 import torchaudio
 import speechbrain as sb    
 from hyperpyyaml import load_hyperpyyaml
-from metric_stats_override import BinaryMetricStats
+from tasks.preprocessing.Modules.metric_stats_override import BinaryMetricStats
 
 """Recipe for training a LID system with CommonLanguage.
 To run this recipe, do the following:
