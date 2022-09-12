@@ -5,6 +5,7 @@ import logging
 import torchaudio
 import speechbrain as sb    
 from hyperpyyaml import load_hyperpyyaml
+from metric_stats_override import BinaryMetricStats
 
 """Recipe for training a LID system with CommonLanguage.
 To run this recipe, do the following:
@@ -97,26 +98,22 @@ class LID(sb.Brain):
         # predictions_binary = torch.unsqueeze(predictions_squeeze, dim=1)
         # predictions_binary = predictions_squeeze
         predictions_binary = torch.argmax(predictions_squeeze_raw, dim=1)
+        targets = batch.language_encoded.data
 
         if stage == sb.Stage.TRAIN:
             print(f'Pred: {predictions}')
+            print(f'Target: {targets}')
+            # Concatenate labels (due to data augmentation)
+            targets = torch.cat([targets, targets], dim=0)
+            lens = torch.cat([lens, lens], dim=0)
+
         else:
             print(f'Pred-edit: {predictions_binary}')
-
-        print(f'Lens: {lens}')
-        print(f'Batch ID: {batch.id}')
-
-        targets = batch.language_encoded.data
-        if stage == sb.Stage.TRAIN:
-            print(f'Target: {targets}')
-        else:
             targets_squeeze = torch.squeeze(targets, dim=1)
             print(f'Target: {targets_squeeze}')
 
-        # Concatenate labels (due to data augmentation)
-        if stage == sb.Stage.TRAIN:
-            targets = torch.cat([targets, targets], dim=0)
-            lens = torch.cat([lens, lens], dim=0)
+        # print(f'Lens: {lens}')
+        # print(f'Batch ID: {batch.id}')
 
         loss = self.hparams.compute_cost(predictions, targets)
 
@@ -152,7 +149,8 @@ class LID(sb.Brain):
         # Set up evaluation-only statistics trackers
         if stage != sb.Stage.TRAIN:
             self.error_metrics = self.hparams.error_stats()
-            self.binary_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=0)
+            # self.binary_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=0)
+            self.binary_metrics = BinaryMetricStats(positive_label=0)
 
             def accuracy_value(predict, target, lengths):
                 """Computes Accuracy"""
@@ -185,19 +183,23 @@ class LID(sb.Brain):
 
         # Summarize the statistics from the stage for record-keeping.
         else:
+            print('DEBUG')
+            print(self.binary_metrics.summarize(field='F-score'))
+            print('DEBUG')
             valid_stats = {
                 "loss": stage_loss,
                 "error": self.error_metrics.summarize("average"),
                 "acc": self.acc_metric.summarize("average"),
-                "F1": self.binary_metrics.summarize(field='F-score'),
-                "EER": self.binary_metrics.summarize(field='DER'),
-                "precision": self.binary_metrics.summarize(field='precision'),
-                "recall": self.binary_metrics.summarize(field='recall'),
-                "TP": self.binary_metrics.summarize(field='TP'),
-                "TN": self.binary_metrics.summarize(field='TN'),
-                "FP": self.binary_metrics.summarize(field='FP'),
-                "FN": self.binary_metrics.summarize(field='FN'),
+                "F1": self.binary_metrics.summarize(field='F-score')[0],
+                "EER": self.binary_metrics.summarize(field='DER')[0],
+                "precision": self.binary_metrics.summarize(field='precision')[0],
+                "recall": self.binary_metrics.summarize(field='recall')[0],
+                "TP": self.binary_metrics.summarize(field='TP')[0],
+                "TN": self.binary_metrics.summarize(field='TN')[0],
+                "FP": self.binary_metrics.summarize(field='FP')[0],
+                "FN": self.binary_metrics.summarize(field='FN')[0],
             }
+        
 
         # At the end of validation...
         if stage == sb.Stage.VALID:
@@ -229,6 +231,10 @@ class LID(sb.Brain):
                 {"Epoch loaded": self.hparams.epoch_counter.current},
                 test_stats=valid_stats,
             )
+            # plot confusion matrix
+            # print(
+            #     {"Confusion Matrix:": torch.tensor([[],[]])}
+            # )
 
 
 def dataio_prep(hparams):
