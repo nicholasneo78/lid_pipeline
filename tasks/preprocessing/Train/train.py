@@ -186,9 +186,10 @@ class LID(sb.Brain):
 
         # Summarize the statistics from the stage for record-keeping.
         else:
-            print('DEBUG')
-            print(self.binary_metrics.summarize(field='F-score'))
-            print('DEBUG')
+            # print('DEBUG')
+            # print(self.binary_metrics.summarize(field='F-score'))
+            # print('DEBUG')
+            
             # valid_stats = {
             #     "loss": stage_loss,
             #     "error": self.error_metrics.summarize("average"),
@@ -268,8 +269,8 @@ class CustomMetrics:
             predicted: the tensor of all the predictions of the audio
             target: the tensor of all the actual label of the audio
         '''
-        self.predicted = predicted
-        self.target = target
+        self.predicted = predicted.to('cpu')
+        self.target = target.to('cpu')
 
     def get_confusion_matrix(self) -> torch.Tensor:
         '''
