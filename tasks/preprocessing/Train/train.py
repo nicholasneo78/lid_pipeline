@@ -1,11 +1,14 @@
 import os
 import sys
+from sklearn.metrics import confusion_matrix
 import torch
 import logging
 import torchaudio
 import speechbrain as sb    
 from hyperpyyaml import load_hyperpyyaml
-from tasks.preprocessing.Modules.metric_stats_override import BinaryMetricStats
+from preprocessing.Modules.metric_stats_override import BinaryMetricStats
+from torchmetrics import ConfusionMatrix
+from sklearn.metrics import classification_report
 
 """Recipe for training a LID system with CommonLanguage.
 To run this recipe, do the following:
@@ -101,23 +104,23 @@ class LID(sb.Brain):
         targets = batch.language_encoded.data
 
         if stage == sb.Stage.TRAIN:
-            print(f'Pred: {predictions}')
-            print(f'Target: {targets}')
+            # print(f'Pred: {predictions}')
+            # print(f'Target: {targets}')
             # Concatenate labels (due to data augmentation)
             targets = torch.cat([targets, targets], dim=0)
             lens = torch.cat([lens, lens], dim=0)
 
         else:
-            print(f'Pred-edit: {predictions_binary}')
+            # print(f'Pred-edit: {predictions_binary}')
             targets_squeeze = torch.squeeze(targets, dim=1)
-            print(f'Target: {targets_squeeze}')
+            # print(f'Target: {targets_squeeze}')
 
         # print(f'Lens: {lens}')
         # print(f'Batch ID: {batch.id}')
 
         loss = self.hparams.compute_cost(predictions, targets)
 
-        print(f'Loss: {loss}')
+        # print(f'Loss: {loss}')
 
         if hasattr(self.hparams.lr_annealing, "on_batch_end"):
             self.hparams.lr_annealing.on_batch_end(self.optimizer)
@@ -186,21 +189,26 @@ class LID(sb.Brain):
             print('DEBUG')
             print(self.binary_metrics.summarize(field='F-score'))
             print('DEBUG')
+            # valid_stats = {
+            #     "loss": stage_loss,
+            #     "error": self.error_metrics.summarize("average"),
+            #     "acc": self.acc_metric.summarize("average"),
+            #     "F1": self.binary_metrics.summarize(field='F-score')[0],
+            #     "EER": self.binary_metrics.summarize(field='DER')[0],
+            #     "precision": self.binary_metrics.summarize(field='precision')[0],
+            #     "recall": self.binary_metrics.summarize(field='recall')[0],
+            #     "TP": self.binary_metrics.summarize(field='TP')[0],
+            #     "TN": self.binary_metrics.summarize(field='TN')[0],
+            #     "FP": self.binary_metrics.summarize(field='FP')[0],
+            #     "FN": self.binary_metrics.summarize(field='FN')[0],
+            # }
             valid_stats = {
                 "loss": stage_loss,
                 "error": self.error_metrics.summarize("average"),
                 "acc": self.acc_metric.summarize("average"),
-                "F1": self.binary_metrics.summarize(field='F-score')[0],
-                "EER": self.binary_metrics.summarize(field='DER')[0],
-                "precision": self.binary_metrics.summarize(field='precision')[0],
-                "recall": self.binary_metrics.summarize(field='recall')[0],
-                "TP": self.binary_metrics.summarize(field='TP')[0],
-                "TN": self.binary_metrics.summarize(field='TN')[0],
-                "FP": self.binary_metrics.summarize(field='FP')[0],
-                "FN": self.binary_metrics.summarize(field='FN')[0],
+                "EER": self.binary_metrics.summarize(field='DER')[0]
             }
         
-
         # At the end of validation...
         if stage == sb.Stage.VALID:
 
@@ -227,15 +235,54 @@ class LID(sb.Brain):
 
         # We also write statistics about test data to stdout and to the logfile.
         if stage == sb.Stage.TEST:
+
+            # print(f'TEST STATS: {valid_stats}')
+            # retrieve the predicted and the target class of the audio
+            predicted, target = self.binary_metrics.summarize(field='F-score')[1], self.binary_metrics.summarize(field='F-score')[2]
+
             self.hparams.train_logger.log_stats(
                 {"Epoch loaded": self.hparams.epoch_counter.current},
                 test_stats=valid_stats,
             )
-            # plot confusion matrix
-            # print(
-            #     {"Confusion Matrix:": torch.tensor([[],[]])}
-            # )
 
+            # compute the additional metrics required
+            metric = CustomMetrics(predicted=predicted, target=target)
+
+            # print the confusion matrix
+            print('CONFUSION MATRIX\n')
+            metric.get_confusion_matrix()
+            print()
+
+            # print the classification report
+            print('CLASSIFICATION REPORT\n')
+            metric.get_f1_report()
+            print()
+
+class CustomMetrics:
+    '''
+        a class to take in the actual and predicted class of the audio, produces the confusion matrix and gets the Precision, Recall and F1 for each of the classes
+    '''
+
+    def __init__(self, predicted: torch.Tensor, target: torch.Tensor) -> None:
+        '''
+            predicted: the tensor of all the predictions of the audio
+            target: the tensor of all the actual label of the audio
+        '''
+        self.predicted = predicted
+        self.target = target
+
+    def get_confusion_matrix(self) -> torch.Tensor:
+        '''
+            returns the confusion matrix
+        '''
+        conf_matrix = ConfusionMatrix(num_classes=len(self.target.unique()))
+        print(conf_matrix(self.predicted, self.target))
+
+    def get_f1_report(self) -> None:
+        '''
+            get the f1 score for all classes
+        '''
+        print(classification_report(self.target, self.predicted, target_names=[str(idx) for idx in self.target.unique().tolist()]))
 
 def dataio_prep(hparams):
     """ This function prepares the datasets to be used in the brain class.
@@ -303,7 +350,6 @@ def dataio_prep(hparams):
     )
 
     return datasets, language_encoder
-
 
 # Recipe begins!
 if __name__ == "__main__":

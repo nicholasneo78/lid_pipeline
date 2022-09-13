@@ -19,7 +19,7 @@ with open(hparams_file) as fin:
 
 ### configs for starting clearml ###
 PROJ_NAME = 'LID'
-ITER = 2
+ITER = 1
 TASK_NAME = f'train_iteration_{ITER}'
 DOCKER_IMG = 'nicholasneo78/sb_lid:v0.0.2'
 QUEUE = 'compute'
@@ -28,13 +28,16 @@ QUEUE = 'compute'
 ### configs to get the clearml dataset ID #############
 PRETRAINED_EMBEDDING_ID = '45e011de2c0d4c87b39656e0e3f61a24'
 DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
-MANIFEST_ID = '71ab138ab92b4969a4e05a9691ef9066'
+MANIFEST_ID = '06f23dc25412468da00dc8415e32bee6' # '71ab138ab92b4969a4e05a9691ef9066'
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'trained_model_iteration_{ITER}'
 #######################################################
 
 ### manifest filename ###
-TRAIN_MANIFEST = f'train_manifest_sb_iteration_{ITER-1}.json'
+if ITER == 1:
+    TRAIN_MANIFEST = f'train_manifest_sb.json'
+else:
+    TRAIN_MANIFEST = f'train_manifest_sb_iteration_{ITER-1}.json'
 DEV_MANIFEST = 'dev_manifest_sb.json'
 TEST_MANIFEST = 'test_manifest_sb.json'
 
