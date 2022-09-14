@@ -28,6 +28,11 @@ QUEUE = 'compute'
 ### configs to get the clearml dataset ID #############
 PRETRAINED_EMBEDDING_ID = '45e011de2c0d4c87b39656e0e3f61a24'
 DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
+
+# DATASET_ID_DICT = {'mms_batch_train': 'dd4117a41f2841ff9238648d191cc015',
+#                    'mms_batch_1s': 'a098c93c37ee4181871dbd4120552ad9',
+#                    'mms_batch_2s': 'b65dafd1fac14a5ea88a0535b13502c2'}
+
 MANIFEST_ID = '06f23dc25412468da00dc8415e32bee6' # '71ab138ab92b4969a4e05a9691ef9066'
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'trained_model_iteration_{ITER}'
@@ -61,9 +66,15 @@ print(f'Before overriding: {hparams["embedding_model_path"]}')
 hparams['embedding_model_path'] = f'{pretrained_embedding_path}/embedding_model.ckpt'
 print(f'After overriding: {hparams["embedding_model_path"]}')
 
-# get the dataset
+# get the dataset paths
 dataset_small = Dataset.get(dataset_id=DATASET_ID)
 dataset_small_path = dataset_small.get_local_copy()
+
+# dictionary to store the root path of clearml to each of the dataset batches
+# clearml_path_dict = {}
+# for clearml_path_key in DATASET_ID_DICT:
+#     dataset_ = Dataset.get(dataset_id=DATASET_ID_DICT[clearml_path_key])
+#     clearml_path_dict[clearml_path_key] = dataset_.get_local_copy()
 
 # get the manifests to the dataset
 manifest = Dataset.get(dataset_id=MANIFEST_ID)
