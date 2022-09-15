@@ -10,11 +10,11 @@ QUEUE = 'compute'
 
 ### configs to get the clearml dataset ID (predicted json manifest file) ###
 # id of the original train data
-ORIGINAL_TRAIN_ID = '71ab138ab92b4969a4e05a9691ef9066'
+ORIGINAL_TRAIN_ID = '867e23da9b0a45b7a0c7c080c397e97d' # '3d511817074843ae9f9a5cbd564fe6a7'
 
 # id of the batches of data from the previous inference
-MANIFEST_ID_LIST = ['d54ffb239345410fb7e37e0a43b44ea3', 
-                    '898dcc04c9ad476e8071b0d7ffd3b45b']
+MANIFEST_ID_LIST = ['f338c52270514395a3c5a8d1aa543690', 
+                    '8aa5271575424feca616a2e4d66853e9']
 
 # for the first iter 
 if ITER == 1:
@@ -28,7 +28,7 @@ MANIFEST_ROOT = 'output'
 ### configs to store the new dataset to save the updated train manifest ###
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'combine_iteration_{ITER}'
-PARENT_DATASET_ID = '71ab138ab92b4969a4e05a9691ef9066' #'a8872c8f04444a75b7e1436a72a534e4'
+PARENT_DATASET_ID = '06f23dc25412468da00dc8415e32bee6' # the base manifest id
 ######################################
 
 # start clearml

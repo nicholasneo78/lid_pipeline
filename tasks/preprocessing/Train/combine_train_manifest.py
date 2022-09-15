@@ -36,6 +36,6 @@ if __name__ == '__main__':
     FILELIST = ['train_manifest_sb', 'batch_1s_iteration_1_en', 'batch_2s_iteration_1_en']
 
     c = CombineTrainManifest(manifest_list=[f'{MANIFEST_ROOT}/{f}.json' for f in FILELIST],
-                             output_manifest=f'{MANIFEST_ROOT}/train_manifest_sb_2.json')
+                             output_manifest=f'{MANIFEST_ROOT}/train_manifest_sb_iteration_1.json')
 
     c()

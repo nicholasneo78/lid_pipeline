@@ -37,7 +37,7 @@ n_mels: 60
 
 # Training Parameters
 sample_rate: 16000
-number_of_epochs: 10 # 30
+number_of_epochs: 2 # 30
 batch_size: 4
 n_languages: 2
 emb_dim: 256 # dimensionality of the embeddings

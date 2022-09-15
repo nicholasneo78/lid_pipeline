@@ -10,15 +10,15 @@ QUEUE = 'compute'
 ####################################
 
 ### configs to get the clearml dataset ID #############
-PRETRAINED_MODEL_ID = 'c431902551504518bf3e5c3637e2342a' # '23ae6fbf80ec489ca3c17591552d6427'
+PRETRAINED_MODEL_ID = 'a3b17ca4d0b243e8af290bd5062e7650' # '23ae6fbf80ec489ca3c17591552d6427'
 HYPERPARAMS_YAML_ID = '22ffe0aba2594c3abaf3251f2b16af5c'
-DATASET_ID = 'de7b2ca7374c4291993f1300695a2015'
-CKPT_PATH = 'CKPT+2022-09-05+07-55-26+00' # 'CKPT+2022-08-31+11-25-40+00'
+DATASET_ID = 'bd8400462e7a4a50910039cdf7f3d4e4' #'3d511817074843ae9f9a5cbd564fe6a7'
+CKPT_PATH = 'CKPT+2022-09-14+11-19-54+00' # 'CKPT+2022-08-31+11-25-40+00'
 MANIFEST_ROOT = 'output'
 #######################################################
 
 ### configs to execute the inference code ###
-THRESHOLD_DICT = {'en': 0.62, 'ms': 0.6}
+THRESHOLD_DICT = {'en': 0.6, 'ms': 0.6}
 OLD_DIR = '/lid/datasets/mms/mms_silence_removed/'
 DATA_BATCH = f'batch_{DATA}'
 ITERATION = f'iteration_{ITER}'
@@ -28,7 +28,7 @@ DATASET_NAME = f'inference_{DATA_BATCH}_{ITERATION}'
 ###############################################
 
 ### switch to see if the inference is done the first time or not ###
-INITIAL_INFER = False
+# INITIAL_INFER = False
 ####################################################################
 
 # start clearml
@@ -62,7 +62,7 @@ shutil.move(f'{hyperparams_root_path}/hyperparams.yaml', f'{model_root_path}/sav
 # create a new directory in the remote folder to store the classified json file
 os.mkdir(f'{MANIFEST_ROOT}/')
 
-if INITIAL_INFER:
+if ITER == 1:
     input_dir = f'{dataset_root_path}/mms_{DATA_BATCH}/manifest.json'
 else:
     # move the manifest file into the subfolder

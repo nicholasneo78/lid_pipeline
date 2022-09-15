@@ -19,7 +19,7 @@ with open(hparams_file) as fin:
 
 ### configs for starting clearml ###
 PROJ_NAME = 'LID'
-ITER = 1
+ITER = 3
 TASK_NAME = f'train_iteration_{ITER}'
 DOCKER_IMG = 'nicholasneo78/sb_lid:v0.0.2'
 QUEUE = 'compute'
@@ -27,13 +27,8 @@ QUEUE = 'compute'
 
 ### configs to get the clearml dataset ID #############
 PRETRAINED_EMBEDDING_ID = '45e011de2c0d4c87b39656e0e3f61a24'
-DATASET_ID = 'a8872c8f04444a75b7e1436a72a534e4'
-
-# DATASET_ID_DICT = {'mms_batch_train': 'dd4117a41f2841ff9238648d191cc015',
-#                    'mms_batch_1s': 'a098c93c37ee4181871dbd4120552ad9',
-#                    'mms_batch_2s': 'b65dafd1fac14a5ea88a0535b13502c2'}
-
-MANIFEST_ID = '06f23dc25412468da00dc8415e32bee6' # '71ab138ab92b4969a4e05a9691ef9066'
+DATASET_ID = '3d511817074843ae9f9a5cbd564fe6a7'
+MANIFEST_ID = 'db5fd2a47fd641d2991797dd131691f2' # '71ab138ab92b4969a4e05a9691ef9066'
 DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = f'trained_model_iteration_{ITER}'
 #######################################################
