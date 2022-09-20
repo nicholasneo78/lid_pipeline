@@ -18,7 +18,7 @@ MANIFEST_ROOT = 'output'
 #############################################
 
 ### configs to store the new dataset to save the updated train manifest ###
-DATASET_PROJ_NAME = 'datasets/LID'# soundfile.export(f'{edited_dir}/{filename}', format='wav')
+DATASET_PROJ_NAME = 'datasets/LID'
 DATASET_NAME = 'split_audio'
 ###########################################################################
 

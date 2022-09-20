@@ -40,19 +40,19 @@ class ConvertSamplingRate:
 if __name__ == '__main__':
 
     # other configs
-    dataset_dir = 'mms'
-    batch = 'mms_batch_5'
+    dataset_dir = 'mms_silence_removed'
+    batch = 'mms_batch_3'
     root_dir = f'/lid/datasets/mms/{dataset_dir}/{batch}'
-    batch_date_list = ['mms_20220814', 'mms_20220815', 'mms_20220816', 'mms_20220817']
+    batch_date_list = ['mms_20220725']
     # batch_date_list =  [d for d in os.listdir(root_dir)] # ['mms_20220404']
     channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
 
     for batch_date in batch_date_list:
         for channel in channel_list:
             try:
-                c = ConvertSamplingRate(manifest_path=f'/lid/datasets/mms/mms/{batch}/{batch_date}/{channel}/manifest.json',
-                                        input_data_dir=f'/lid/datasets/mms/mms/{batch}/{batch_date}/{channel}',
-                                        output_data_dir=f'/lid/datasets/mms/mms/{batch}/{batch_date}/{channel}',
+                c = ConvertSamplingRate(manifest_path=f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}/manifest.json',
+                                        input_data_dir=f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}',
+                                        output_data_dir=f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}',
                                         target_sr=16000)
                 c()
 
