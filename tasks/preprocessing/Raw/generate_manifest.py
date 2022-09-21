@@ -112,13 +112,13 @@ class GenerateManifest:
 
 if __name__ == '__main__':
 
+    data_folder = 'mms_final'
     batch = 'mms_batch_5'
-    data_folder = 'mms' # 'mms_prediction_055'
     root_dir = f'/lid/datasets/mms/{data_folder}/{batch}'
-    # batch_date_list = [d for d in os.listdir(root_dir)]
-    batch_date_list = ['mms_20220817']
-    channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
-    # channel_list = ['CH 10/en', 'CH 10/ms', 'CH 10/others', 'CH 16/en', 'CH 16/ms', 'CH 16/others', 'CH 73/en', 'CH 73/ms', 'CH 73/others', 'CH 14/en', 'CH 14/ms', 'CH 14/others']
+    batch_date_list = [d for d in os.listdir(root_dir)]
+    # batch_date_list = ['mms_20220130']
+    # channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
+    channel_list = ['CH 10/en', 'CH 10/ms', 'CH 10/others', 'CH 16/en', 'CH 16/ms', 'CH 16/others', 'CH 73/en', 'CH 73/ms', 'CH 73/others', 'CH 14/en', 'CH 14/ms', 'CH 14/others']
 
     for mms_date in batch_date_list:
         for channel in channel_list:
@@ -128,7 +128,7 @@ if __name__ == '__main__':
                                                 got_annotation=False,
                                                 audio_ext='.wav')
 
-                # get_manifest.remove_old_json_file()
+                get_manifest.remove_old_json_file()
 
                 _ = get_manifest()
 
