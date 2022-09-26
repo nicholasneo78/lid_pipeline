@@ -7,19 +7,19 @@
 #  * Pavlo Ruban
 # #################################hparams
 # Seed needs to be set at top of yaml, before objects with parameters are made
-seed: 2011
+seed: 1012
 __set_seed: !apply:torch.manual_seed [!ref <seed>]
 
 # Set up folders for reading from and writing to
 # Dataset will be downloaded to the `data_folder`
-data_folder: /lid/datasets/mms/mms_silence_removed # e.g. /localscratch/common_voice_kpd/
+data_folder: /lid/datasets/daniel/vox-9langs-small # /lid/datasets/mms/mms_silence_removed # e.g. /localscratch/common_voice_kpd/
 output_folder: !ref /lid/tasks/preprocessing/Train/results/ECAPA-TDNN/<seed>
 save_folder: !ref <output_folder>/save
 train_log: !ref <output_folder>/train_log.txt
 
-train_annotation: /lid/datasets/mms/mms_silence_removed/train_manifest_sb.json
-dev_annotation: /lid/datasets/mms/mms_silence_removed/dev_manifest_sb.json
-test_annotation: /lid/datasets/mms/mms_silence_removed/test_manifest_sb.json
+train_annotation: /lid/datasets/daniel/vox-9langs-small/train_manifest_sb.json # /lid/datasets/mms/mms_silence_removed/train_manifest_sb.json
+dev_annotation: /lid/datasets/daniel/vox-9langs-small/dev_manifest_sb.json # /lid/datasets/mms/mms_silence_removed/dev_manifest_sb.json
+test_annotation: /lid/datasets/daniel/vox-9langs-small/test_manifest_sb.json # /lid/datasets/mms/mms_silence_removed/test_manifest_sb.json
 
 # The train logger writes training statistics to a file, as well as stdout.
 train_logger: !new:speechbrain.utils.train_logger.FileTrainLogger
@@ -37,9 +37,9 @@ n_mels: 60
 
 # Training Parameters
 sample_rate: 16000
-number_of_epochs: 20 # 30
+number_of_epochs: 2 # 20 # 30
 batch_size: 2
-n_languages: 2
+n_languages: 9 # 2
 emb_dim: 256 # dimensionality of the embeddings
 
 # Dataloaders

@@ -146,6 +146,7 @@ dataset = Dataset.create(
 )
 
 dataset.add_files(path=hparams['output_folder'])
+dataset.add_files(path='output.pkl')
 dataset.upload(output_url="s3://experiment-logging")
 dataset.finalize()
 

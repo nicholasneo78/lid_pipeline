@@ -9,3 +9,6 @@ results/
 tests/
 data/
 testing.py
+tasks/preprocessing/Train/Modules/*
+tasks/preprocessing/Train/*.pkl
+tasks/preprocessing/Train/*.txt

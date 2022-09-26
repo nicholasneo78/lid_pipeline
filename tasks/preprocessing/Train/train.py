@@ -1,12 +1,13 @@
 import os
 import sys
-from sklearn.metrics import confusion_matrix
+import pickle
 import torch
 import logging
 import torchaudio
 import speechbrain as sb    
 from hyperpyyaml import load_hyperpyyaml
-from preprocessing.Modules.metric_stats_override import BinaryMetricStats
+# from preprocessing.Modules.metric_stats_override import BinaryMetricStats
+from Modules.metric_stats_override import BinaryMetricStats
 from torchmetrics import ConfusionMatrix
 from sklearn.metrics import classification_report
 
@@ -23,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Brain class for Language ID training
 class LID(sb.Brain):
+
     def prepare_features(self, wavs, stage):
         """Prepare the features for computation, including augmentation.
         Arguments
@@ -128,7 +130,6 @@ class LID(sb.Brain):
         if stage != sb.Stage.TRAIN:
             self.error_metrics.append(batch.id, predictions, targets, lens)
 
-            # self.binary_metrics.append(batch.id, predictions, targets, lens)
             self.binary_metrics.append(batch.id, predictions_binary, targets_squeeze)
             # print(batch.id, predictions_binary, targets)
 
@@ -152,7 +153,6 @@ class LID(sb.Brain):
         # Set up evaluation-only statistics trackers
         if stage != sb.Stage.TRAIN:
             self.error_metrics = self.hparams.error_stats()
-            # self.binary_metrics = sb.utils.metric_stats.BinaryMetricStats(positive_label=0)
             self.binary_metrics = BinaryMetricStats(positive_label=0)
 
             def accuracy_value(predict, target, lengths):
@@ -241,6 +241,10 @@ class LID(sb.Brain):
             # retrieve the predicted and the target class of the audio
             predicted, target = self.binary_metrics.summarize(field='F-score')[1], self.binary_metrics.summarize(field='F-score')[2]
 
+            print(f'Predicted: {predicted}')
+            print()
+            print(f'Target: {target}')
+
             self.hparams.train_logger.log_stats(
                 {"Epoch loaded": self.hparams.epoch_counter.current},
                 test_stats=valid_stats,
@@ -258,6 +262,13 @@ class LID(sb.Brain):
             print('CLASSIFICATION REPORT\n')
             metric.get_f1_report()
             print()
+
+            # save the predicted and the target into a json file
+            output_dict = {'target': target,
+                           'predicted': predicted}
+
+            with open('output.pkl', 'wb') as f:
+                pickle.dump(output_dict, f)
 
 class CustomMetrics:
     '''

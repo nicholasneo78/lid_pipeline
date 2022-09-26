@@ -73,14 +73,28 @@ class GenerateManifestSpeechBrain:
 
 if __name__ == '__main__':
 
-    LANGUAGES = ['ms', 'en']
+    # LANGUAGES = ['ms', 'en']
 
+    # for lang in LANGUAGES:
+    #     get_manifest = GenerateManifestSpeechBrain(root_folder='/lid/datasets/mms/mms_silence_removed/mms_batch_train', 
+    #                                             manifest_filename=f'/lid/datasets/mms/mms_silence_removed/manifest_{lang}.json', 
+    #                                             removed_dir='/lid/datasets/mms/mms_silence_removed/',
+    #                                             replaced_dir='{data_root}/', #'/workspace/datasets/mms/', #'{root}/',
+    #                                             target_language=lang,
+    #                                             audio_ext='.wav')
+
+    #     get_manifest()
+
+    root_dir = '/lid/datasets/daniel/vox-9langs-small'
+
+    LANGUAGES = os.listdir(root_dir)
     for lang in LANGUAGES:
-        get_manifest = GenerateManifestSpeechBrain(root_folder='/lid/datasets/mms/mms_silence_removed/mms_batch_train', 
-                                                manifest_filename=f'/lid/datasets/mms/mms_silence_removed/manifest_{lang}.json', 
-                                                removed_dir='/lid/datasets/mms/mms_silence_removed/',
-                                                replaced_dir='{data_root}/', #'/workspace/datasets/mms/', #'{root}/',
-                                                target_language=lang,
-                                                audio_ext='.wav')
+        get_manifest = GenerateManifestSpeechBrain(root_folder=f'{root_dir}/{lang}', 
+                                                   manifest_filename=f'{root_dir}/manifest_{lang}.json', 
+                                                   removed_dir=root_dir,
+                                                   replaced_dir='{data_root}', #'/workspace/datasets/mms/', #'{root}/',
+                                                   target_language=lang,
+                                                   audio_ext='.wav')
 
         get_manifest()
+

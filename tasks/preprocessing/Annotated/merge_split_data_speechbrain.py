@@ -204,15 +204,22 @@ class MergeAndSplit:
         return self.convert_json_format(train_ratio, dev_ratio)
 
 if __name__ == '__main__':
-    BASE_DIR = '/lid/datasets/mms/mms_silence_removed'
+    # BASE_DIR = '/lid/datasets/mms/mms_silence_removed'
+    BASE_DIR = '/lid/datasets/daniel/vox-9langs-small'
 
-    l = MergeAndSplit(json_dir_list=[f'{BASE_DIR}/manifest_en.json', f'{BASE_DIR}/manifest_ms.json'], 
+    # l = MergeAndSplit(json_dir_list=[f'{BASE_DIR}/manifest_en.json', f'{BASE_DIR}/manifest_ms.json'], 
+    #                   train_dir=f'{BASE_DIR}/train_manifest_sb.json', 
+    #                   dev_dir=f'{BASE_DIR}/dev_manifest_sb.json', 
+    #                   test_dir=f'{BASE_DIR}/test_manifest_sb.json',
+    #                   sampling_mode='all')
+
+    l = MergeAndSplit(json_dir_list=[f'{BASE_DIR}/{manifest_lang}' for manifest_lang in os.listdir(BASE_DIR) if manifest_lang.endswith('.json')], 
                       train_dir=f'{BASE_DIR}/train_manifest_sb.json', 
                       dev_dir=f'{BASE_DIR}/dev_manifest_sb.json', 
                       test_dir=f'{BASE_DIR}/test_manifest_sb.json',
                       sampling_mode='all')
 
-    train_dict, dev_dict, test_dict = l(train_ratio=0.9, dev_ratio=0.05)
+    train_dict, dev_dict, test_dict = l(train_ratio=0.8, dev_ratio=0.1)
     print(len(train_dict))
     print(len(dev_dict))
     print(len(test_dict))
