@@ -2,7 +2,6 @@
 To get the filename mapping of the index class and print out the classification report
 '''
 
-import enum
 import os
 import pickle
 import torch
