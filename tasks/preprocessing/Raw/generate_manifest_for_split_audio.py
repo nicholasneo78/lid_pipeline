@@ -47,7 +47,10 @@ class GenerateManifestForSplitAudio:
         return self.get_manifest()
 
 if __name__ == '__main__':
-    g = GenerateManifestForSplitAudio(root_folder='/lid/datasets/mms/mms_silence_removed/mms_batch_2s/', 
-                                      manifest_filename='/lid/datasets/mms/mms_silence_removed/mms_batch_2s/manifest.json')
+    # g = GenerateManifestForSplitAudio(root_folder='/lid/datasets/mms/mms_silence_removed/mms_batch_2s/', 
+    #                                   manifest_filename='/lid/datasets/mms/mms_silence_removed/mms_batch_2s/manifest.json')
+
+    g = GenerateManifestForSplitAudio(root_folder='/lid/datasets/mms/data_to_i2r/mms_set_1/', 
+                                      manifest_filename='/lid/datasets/mms/data_to_i2r/mms_set_1/manifest.json')
 
     manifest_path = g()

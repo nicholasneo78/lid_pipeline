@@ -92,8 +92,8 @@ if __name__ == '__main__':
 
     dataset_input_dir = 'mms'
     dataset_output_dir = 'mms_silence_removed'
-    batch = 'mms_batch_4'
-    batch_date = ['mms_20220502']
+    batch = 'mms_batch_7'
+    batch_date = ['mms_20220825', 'mms_20220826', 'mms_20220827', 'mms_20220828', 'mms_20220829', 'mms_20220830', 'mms_20220831']
     channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
 
     for date in batch_date:

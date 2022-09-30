@@ -3,6 +3,7 @@ To get the filename mapping of the index class and print out the classification 
 '''
 
 import os
+import json
 import pickle
 import torch
 from torchmetrics import ConfusionMatrix
@@ -35,6 +36,8 @@ class CustomMetrics:
             get the f1 score for all classes
         '''
         print(classification_report(self.target, self.predicted, target_names=self.mapping))
+        report_dict = classification_report(self.target, self.predicted, target_names=self.mapping, output_dict=True)
+        return report_dict
 
 class ClassificationReport:
     def __init__(self, pkl_dir: str, mapping_dir: str) -> None:
@@ -80,10 +83,15 @@ class ClassificationReport:
 
         print('CLASSIFICATION REPORT\n')
         f_metric = CustomMetrics(predicted=results['predicted'], target=results['target'], mapping=[lang_mapping[idx] for idx in lang_mapping])
-        f_metric.get_f1_report()
-        print()
+        report_dict = f_metric.get_f1_report()
+        return report_dict
 
 if __name__ == '__main__':
     cr = ClassificationReport(pkl_dir='output.pkl', 
                               mapping_dir='language_encoder.txt')
-    cr.report()
+    report_dict = cr.report()
+    # print(report_dict)
+
+    # export the report as a json file
+    with open('results.json', 'w') as f:
+        json.dump(report_dict, f, indent=2)

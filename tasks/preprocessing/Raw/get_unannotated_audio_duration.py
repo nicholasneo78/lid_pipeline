@@ -47,10 +47,10 @@ if __name__ == '__main__':
     MODE = 'one_date' # one_dir or one_date
 
     # other configs
-    dataset_dir = 'data_to_i2r' # 'mms_final'
-    # dataset_dir = 'mms_silence_removed'
-    batch = 'mms_set_1' # 'mms_batch_5'
-    batch_date = 'en' # 'mms_20220817'
+    # dataset_dir = 'mms' # 'data_to_i2r' 
+    dataset_dir = 'mms_silence_removed'
+    batch = 'mms_batch_7' # 'mms_set_1' 
+    batch_date = 'mms_20220831' # 'en'
 
     # check info for a single directory, specific date and channel
     if MODE == 'one_dir':
