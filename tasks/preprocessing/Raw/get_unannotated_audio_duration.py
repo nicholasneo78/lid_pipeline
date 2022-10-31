@@ -100,3 +100,13 @@ if __name__ == '__main__':
         
         print()
 
+
+    # AUDIO_DIR = f'/lid/datasets/jtubespeech/ms/annotated_data'
+    # MANIFEST_DIR = f'/lid/datasets/jtubespeech/ms/annotated_data/manifest.json'
+
+    # audio_details = GetAudioInfo(audio_dir=AUDIO_DIR, 
+    #                                 manifest_dir=MANIFEST_DIR)
+
+    # audio_length_s, audio_length_hr, num_audio, actual_num_audio = audio_details()
+    # logging.getLogger('Number of Audio').info(f'all audio files: {num_audio}')
+    # logging.getLogger('Total Audio Length').info(f'duration (h): {audio_length_hr}')
