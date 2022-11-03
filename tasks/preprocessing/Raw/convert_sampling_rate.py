@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     # other configs
     dataset_dir = 'mms'
-    batch = 'mms_batch_7'
+    batch = 'mms_batch_8'
     root_dir = f'/lid/datasets/mms/{dataset_dir}/{batch}'
     # batch_date_list = ['mms_20220725']
     batch_date_list =  [d for d in os.listdir(root_dir)] # ['mms_20220404']

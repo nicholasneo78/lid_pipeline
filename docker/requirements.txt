@@ -29,3 +29,5 @@ pandas
 
 boto3
 minio
+
+num2words

@@ -7,7 +7,7 @@ services:
     tty: true
     image: sb_lid:v0.0.1
     volumes:
-      - /mnt/d/code/asr-pipeline/lid_pipeline/:/lid
+      - /mnt/d/code/lid_pipeline/:/lid
       - /mnt/d/datasets/:/lid/datasets
       - /mnt/d/models/:/lid/models
     ulimits:

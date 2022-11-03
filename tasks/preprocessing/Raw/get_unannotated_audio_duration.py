@@ -43,70 +43,70 @@ class GetAudioInfo:
 
 if __name__ == '__main__':
 
-    # choose the mode to get the channel informations
-    MODE = 'one_date' # one_dir or one_date
+    # # # choose the mode to get the channel informations
+    # MODE = 'one_date' # one_dir or one_date
 
-    # other configs
-    # dataset_dir = 'mms' # 'data_to_i2r' 
-    dataset_dir = 'mms_silence_removed'
-    batch = 'mms_batch_7' # 'mms_set_1' 
-    batch_date = 'mms_20220831' # 'en'
+    # # other configs
+    # # dataset_dir = 'mms' # 'data_to_i2r' 
+    # dataset_dir = 'data_to_i2r' # 'mms_silence_removed'
+    # batch = 'mms_set_2' # 'mms_batch_8' # 'mms_set_1' 
+    # batch_date = 'en' # 'mms_20220910' # 'en'
 
-    # check info for a single directory, specific date and channel
-    if MODE == 'one_dir':
+    # # check info for a single directory, specific date and channel
+    # if MODE == 'one_dir':
 
-        channel = 'CH 10'
-        AUDIO_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}'
-        MANIFEST_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}/manifest.json'
+    #     channel = 'CH 10'
+    #     AUDIO_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}'
+    #     MANIFEST_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}/manifest.json'
 
-        audio_details = GetAudioInfo(audio_dir=AUDIO_DIR, 
-                                     manifest_dir=MANIFEST_DIR)
+    #     audio_details = GetAudioInfo(audio_dir=AUDIO_DIR, 
+    #                                  manifest_dir=MANIFEST_DIR)
 
-        audio_length_s, audio_length_hr, num_audio, actual_num_audio = audio_details()
+    #     audio_length_s, audio_length_hr, num_audio, actual_num_audio = audio_details()
 
-        print()
-        # logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (without empty audio): {num_audio}')
-        logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (all audio files in the folder): {actual_num_audio}')
-        # logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (s): {audio_length_s}')
-        logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel}  (h): {audio_length_hr}')
+    #     print()
+    #     # logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (without empty audio): {num_audio}')
+    #     logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (all audio files in the folder): {actual_num_audio}')
+    #     # logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (s): {audio_length_s}')
+    #     logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel}  (h): {audio_length_hr}')
 
-        print()
+    #     print()
     
-    # check info for a single date
-    elif MODE == 'one_date':
+    # # check info for a single date
+    # elif MODE == 'one_date':
 
-        channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
-        # channel_list = ['CH 10/en', 'CH 10/ms', 'CH 10/others', 'CH 14/en', 'CH 14/ms', 'CH 14/others', 'CH 16/en', 'CH 16/ms', 'CH 16/others', 'CH 73/en', 'CH 73/ms', 'CH 73/others']
-        for channel in channel_list:
-            try:
-                AUDIO_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}'
-                MANIFEST_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}/manifest.json'
+    #     channel_list = ['CH 10', 'CH 14', 'CH 16', 'CH 73']
+    #     # channel_list = ['CH 10/en', 'CH 10/ms', 'CH 10/others', 'CH 14/en', 'CH 14/ms', 'CH 14/others', 'CH 16/en', 'CH 16/ms', 'CH 16/others', 'CH 73/en', 'CH 73/ms', 'CH 73/others']
+    #     for channel in channel_list:
+    #         try:
+    #             AUDIO_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}'
+    #             MANIFEST_DIR = f'/lid/datasets/mms/{dataset_dir}/{batch}/{batch_date}/{channel}/manifest.json'
 
-                audio_details = GetAudioInfo(audio_dir=AUDIO_DIR, 
-                                             manifest_dir=MANIFEST_DIR)
+    #             audio_details = GetAudioInfo(audio_dir=AUDIO_DIR, 
+    #                                          manifest_dir=MANIFEST_DIR)
 
-                audio_length_s, audio_length_hr, num_audio, actual_num_audio = audio_details()
+    #             audio_length_s, audio_length_hr, num_audio, actual_num_audio = audio_details()
 
-                print()
-                # logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (without empty audio): {num_audio}')
-                logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (all audio files in the folder): {actual_num_audio}')
-                # logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (s): {audio_length_s}')
-                logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel}  (h): {audio_length_hr}')
+    #             print()
+    #             # logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (without empty audio): {num_audio}')
+    #             logging.getLogger('Number of Audio').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (all audio files in the folder): {actual_num_audio}')
+    #             # logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel} (s): {audio_length_s}')
+    #             logging.getLogger('Total Audio Length').info(f'{dataset_dir} - {batch} - {batch_date} - {channel}  (h): {audio_length_hr}')
             
-            except FileNotFoundError:
-                print()
-                logging.getLogger('EMPTY FOLDER ALERT').info(f'{dataset_dir} - {batch} - {batch_date} - {channel}: Channel with no audio files')
-                continue
+    #         except FileNotFoundError:
+    #             print()
+    #             logging.getLogger('EMPTY FOLDER ALERT').info(f'{dataset_dir} - {batch} - {batch_date} - {channel}: Channel with no audio files')
+    #             continue
         
-        print()
+    #     print()
 
 
-    # AUDIO_DIR = f'/lid/datasets/jtubespeech/ms/annotated_data'
-    # MANIFEST_DIR = f'/lid/datasets/jtubespeech/ms/annotated_data/manifest.json'
+    AUDIO_DIR = f'/lid/datasets/jtubespeech/ms_2/annotated_data_whisper_ms'
+    MANIFEST_DIR = f'/lid/datasets/jtubespeech/ms_2/annotated_data_whisper_ms/pred_manifest_updated.json'
 
-    # audio_details = GetAudioInfo(audio_dir=AUDIO_DIR, 
-    #                                 manifest_dir=MANIFEST_DIR)
+    audio_details = GetAudioInfo(audio_dir=AUDIO_DIR, 
+                                 manifest_dir=MANIFEST_DIR)
 
-    # audio_length_s, audio_length_hr, num_audio, actual_num_audio = audio_details()
-    # logging.getLogger('Number of Audio').info(f'all audio files: {num_audio}')
-    # logging.getLogger('Total Audio Length').info(f'duration (h): {audio_length_hr}')
+    audio_length_s, audio_length_hr, num_audio, actual_num_audio = audio_details()
+    logging.getLogger('Number of Audio').info(f'all audio files: {num_audio}')
+    logging.getLogger('Total Audio Length').info(f'duration (h): {audio_length_hr}')
